@@ -1,45 +1,49 @@
 <template>
-  <div id="biblequiz-questions">
-
-    <div class="title my-5">
-      Game #{{ game.id }} {{ game.title }} - {{ game.date | formatDate }}
-    </div>
+  <div id="biblequiz-levels">
 
     <v-card>
       <v-card-title>
-        Questions
+        Levels
       </v-card-title>
-      <v-data-table :headers="headers" :items="questions" :loading="loadingItems">
+      <v-data-table :headers="headers" :items="levels" :loading="loadingItems">
         <template v-slot:item.date="{ item }">
           {{ item.date | formatDate }}
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn text small color="primary"
-            @click="editQuestion(item)">
+            @click="editGame(item)">
             <v-icon left>mdi-pencil</v-icon>
             Edit
+          </v-btn>
+          <v-btn text small color="primary"
+            :to="`/game/${item.id}/questions`">
+            <v-icon left>mdi-pencil</v-icon>
+            Questions
           </v-btn>
         </template>
       </v-data-table>
       <v-card-actions>
-        <v-btn plain color="primary" @click="newQuestion">New</v-btn>
+        <v-btn plain color="primary" @click="newGame">New</v-btn>
       </v-card-actions>
     </v-card>
 
-    <!-- Question details dialog -->
+    <!-- Game details dialog -->
     <v-dialog v-model="form.show" persistent max-width="360">
       <v-card>
         <v-card-title>
-          Question
+          Game
         </v-card-title>
         <v-card-text>
-          <v-form v-model="form.valid" @submit.prevent="saveQuestion">
+          <v-form v-model="form.valid" @submit.prevent="saveGame">
 
-            <v-select label="Level"
-              :items="levels"
-              v-model="form.data.level_id"
-              required>
-            </v-select>
+            <v-text-field label="Title"
+              v-model="form.data.title"
+              required counter maxlength="64">
+            </v-text-field>
+            <v-date-picker
+              v-model="form.data.date"
+              full-width show-adjacent-months>
+            </v-date-picker>
 
             <v-alert v-if="form.message != ''" dense>
               {{ form.message }}
@@ -49,7 +53,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" :disabled="!form.valid" @click="saveQuestion">
+          <v-btn color="primary" :disabled="!form.valid" @click="saveGame">
             Save
           </v-btn>
           <v-btn @click="form.show = false">
@@ -63,21 +67,16 @@
 
 <script>
 import moment from 'moment'
-import apiQuestions from '@/api/questions'
+import apiGames from '@/api/games'
 
 export default {
-  name: 'view-questions-list',
-  props: {
-    game_id: {
-      type: String
-    }
-  },
+  name: 'view-games-list',
   data: () => ({
     loadingItems: false,
     headers: [
       {
-        text: 'Question',
-        value: 'question'
+        text: 'Title',
+        value: 'title'
       },
       {
         text: 'Date',
@@ -88,18 +87,12 @@ export default {
         value: 'actions'
       }
     ],
-    game: {},
-    levels: [],
-    quest_types: [],
-    questions: [],
+    games: [],
     form: {
       data: {
         active: 0,
-        game_id: 0,
-        level_id: 0,
-        type_id: 0,
-        question: '',
-        score: 1
+        title: '',
+        date: ''
       },
       show: false,
       valid: false,
@@ -109,24 +102,21 @@ export default {
     },
   }),
   mounted () {
-    this.getQuestions()
+    this.getGames()
   },
   methods: {
-    getQuestions: function () {
+    getGames: function () {
       this.loadingItems = true
-      apiQuestions.getGameQuestions({ game_id: this.game_id })
+      apiGames.getAll()
         .then(response => {
-          this.game = response.game
-          this.levels = response.levels
-          this.quest_types = response.quest_types
-          this.questions = response.questions
+          this.games = response.games
         }).catch(err => {
           console.log(err)
         }).finally(() => {
           this.loadingItems = false
         })
     },
-    newQuestion: function () {
+    newGame: function () {
       this.form.submitting = false
       this.form.message = ''
       this.form.success = false
@@ -137,7 +127,7 @@ export default {
       }
       this.form.show = true
     },
-    editQuestion: function (game) {
+    editGame: function (game) {
       this.form.submitting = false
       this.form.message = ''
       this.form.success = false
@@ -145,14 +135,14 @@ export default {
       this.form.data.date = moment(game.date).format('YYYY-MM-DD')
       this.form.show = true
     },
-    saveQuestion: function () {
+    saveGame: function () {
       this.form.submitting = true
       this.form.message = ''
-      apiQuestions.saveQuestion(this.form.data)
+      apiGames.saveGame(this.form.data)
         .then(data => {
           if (!data.err) {
             this.form.show = false
-            this.getQuestions()
+            this.getGames()
           }
         })
         .catch(err => {
