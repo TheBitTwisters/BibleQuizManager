@@ -2,7 +2,7 @@
   <div class="biblequiz-dashboard">
     <h1 class="my-5">Bible Quiz Manager</h1>
     <v-row>
-      <v-col cols="12" lg="4">
+      <v-col cols="12" lg="6" xl="4">
         <Games/>
       </v-col>
     </v-row>

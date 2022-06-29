@@ -6,35 +6,27 @@
         Levels
       </v-card-title>
       <v-data-table :headers="headers" :items="levels" :loading="loadingItems">
-        <template v-slot:item.date="{ item }">
-          {{ item.date | formatDate }}
-        </template>
         <template v-slot:item.actions="{ item }">
           <v-btn text small color="primary"
-            @click="editGame(item)">
+            @click="editLevel(item)">
             <v-icon left>mdi-pencil</v-icon>
             Edit
-          </v-btn>
-          <v-btn text small color="primary"
-            :to="`/game/${item.id}/questions`">
-            <v-icon left>mdi-pencil</v-icon>
-            Questions
           </v-btn>
         </template>
       </v-data-table>
       <v-card-actions>
-        <v-btn plain color="primary" @click="newGame">New</v-btn>
+        <v-btn plain color="primary" @click="newLevel">New</v-btn>
       </v-card-actions>
     </v-card>
 
-    <!-- Game details dialog -->
+    <!-- Level details dialog -->
     <v-dialog v-model="form.show" persistent max-width="360">
       <v-card>
         <v-card-title>
-          Game
+          Level
         </v-card-title>
         <v-card-text>
-          <v-form v-model="form.valid" @submit.prevent="saveGame">
+          <v-form v-model="form.valid" @submit.prevent="saveLevel">
 
             <v-text-field label="Title"
               v-model="form.data.title"
@@ -53,7 +45,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" :disabled="!form.valid" @click="saveGame">
+          <v-btn color="primary" :disabled="!form.valid" @click="saveLevel">
             Save
           </v-btn>
           <v-btn @click="form.show = false">
@@ -67,10 +59,10 @@
 
 <script>
 import moment from 'moment'
-import apiGames from '@/api/games'
+import apiLevels from '@/api/levels'
 
 export default {
-  name: 'view-games-list',
+  name: 'view-levels-list',
   data: () => ({
     loadingItems: false,
     headers: [
@@ -87,7 +79,7 @@ export default {
         value: 'actions'
       }
     ],
-    games: [],
+    levels: [],
     form: {
       data: {
         active: 0,
@@ -102,21 +94,21 @@ export default {
     },
   }),
   mounted () {
-    this.getGames()
+    this.getLevels()
   },
   methods: {
-    getGames: function () {
+    getLevels: function () {
       this.loadingItems = true
-      apiGames.getAll()
+      apiLevels.getAll()
         .then(response => {
-          this.games = response.games
+          this.levels = response.levels
         }).catch(err => {
           console.log(err)
         }).finally(() => {
           this.loadingItems = false
         })
     },
-    newGame: function () {
+    newLevel: function () {
       this.form.submitting = false
       this.form.message = ''
       this.form.success = false
@@ -127,22 +119,21 @@ export default {
       }
       this.form.show = true
     },
-    editGame: function (game) {
+    editLevel: function (level) {
       this.form.submitting = false
       this.form.message = ''
       this.form.success = false
-      this.form.data = game
-      this.form.data.date = moment(game.date).format('YYYY-MM-DD')
+      this.form.data = level
       this.form.show = true
     },
-    saveGame: function () {
+    saveLevel: function () {
       this.form.submitting = true
       this.form.message = ''
-      apiGames.saveGame(this.form.data)
+      apiLevels.saveLevel(this.form.data)
         .then(data => {
           if (!data.err) {
             this.form.show = false
-            this.getGames()
+            this.getLevels()
           }
         })
         .catch(err => {
