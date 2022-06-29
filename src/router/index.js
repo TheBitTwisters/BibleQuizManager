@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import ViewLogin from '@/views/Login.vue'
-import ViewDashboard from '@/views/Dashboard.vue'
+import ViewLogin from '@/views/Login'
+import ViewDashboard from '@/views/Dashboard'
+import ViewGames from '@/views/Games'
+import ViewQuestions from '@/views/Questions'
 
 Vue.use(VueRouter)
 
@@ -16,6 +18,17 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: ViewDashboard
+  },
+  {
+    path: '/games',
+    name: 'Games',
+    component: ViewGames
+  },
+  {
+    path: '/game/:game_id/questions',
+    name: 'Questions',
+    props: true,
+    component: ViewQuestions
   }
 ]
 

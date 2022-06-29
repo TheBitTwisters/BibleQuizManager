@@ -1,9 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VuexPersistence from 'vuex-persist'
+
 import router from '@/router'
 import moment from 'moment'
 
 Vue.use(Vuex)
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage
+});
 
 export default new Vuex.Store({
   state: {
@@ -14,7 +20,8 @@ export default new Vuex.Store({
       id: 0,
       name: '',
       current_game_id: 0
-    }
+    },
+    games: []
   },
   mutations: {
     SET_SESSION_MANAGER (state, manager) {
@@ -28,13 +35,16 @@ export default new Vuex.Store({
       state.startedAt = moment().valueOf()
       state.token = session.token || ''
       state.expiresIn = session.expiresIn || 0
+    },
+    SET_GAMES (state, games) {
+      state.games = games
     }
   },
   actions: {
     'session-login': function ({ commit }, params) {
       commit('SET_SESSION', params.session)
       commit('SET_SESSION_MANAGER', params.manager)
-      commit('SET_APP_DRAWER', true)
+      commit('SET_GAMES', params.games)
       router.push({ name: 'Dashboard' })
     },
     'session-logout': function ({ commit }) {
@@ -44,6 +54,12 @@ export default new Vuex.Store({
       router.push({ name: 'Login' })
     }
   },
-  modules: {
-  }
+  getters: {
+    getSessionToken: (state) => () => {
+      return state.token
+    },
+  },
+  plugins: [
+    vuexLocal.plugin
+  ],
 })

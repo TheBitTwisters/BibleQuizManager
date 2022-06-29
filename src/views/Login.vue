@@ -4,15 +4,17 @@
       Login
     </v-card-title>
     <v-card-text>
-      <v-form v-model="form.valid" @submit.prevent="login">
+      <v-form>
 
-        <v-text-field label="Name"
+        <v-text-field label="Name" placeholder="Enter name"
           v-model="form.data.name"
-          required>
+          outlined required hide-details>
         </v-text-field>
         <v-otp-input
           v-model="form.data.pin"
-          length="4">
+          type="number"
+          length="4"
+          @finish="login">
         </v-otp-input>
 
         <v-alert v-if="form.message != ''" dense>
@@ -21,13 +23,6 @@
 
       </v-form>
     </v-card-text>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn type="submit" :disabled="!form.valid"
-        @click="login">
-        Login
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 
