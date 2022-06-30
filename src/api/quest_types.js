@@ -1,14 +1,11 @@
 import axios from '@/plugins/axios'
 import store from '@/store'
 
-const getGameQuestions = (params) => {
+const getAll = () => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url: '/questions/all',
-      data: {
-        game_id: params.game_id
-      },
+      url: '/quest_types/all',
       headers: {
         'Authorization': store.getters.getSessionToken()
       }
@@ -23,13 +20,13 @@ const getGameQuestions = (params) => {
   })
 }
 
-const saveQuestion = (params) => {
+const saveQuestType = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: params.id ? 'put' : 'post',
-      url: `/questions/${params.id ? params.id : 'save'}`,
+      url: `/quest_types/${params.id ? params.id : 'save'}`,
       data: {
-        question: params
+        quest_type: params
       },
       headers: {
         'Authorization': store.getters.getSessionToken()
@@ -46,6 +43,6 @@ const saveQuestion = (params) => {
 }
 
 export default {
-  getGameQuestions,
-  saveQuestion
+  getAll,
+  saveQuestType
 }

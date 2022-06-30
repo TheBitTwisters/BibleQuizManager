@@ -1,7 +1,7 @@
 <template>
   <div id="biblequiz-levels">
 
-    <v-card>
+    <v-card class="mb-5">
       <v-card-title>
         Levels
       </v-card-title>
@@ -28,14 +28,15 @@
         <v-card-text>
           <v-form v-model="form.valid" @submit.prevent="saveLevel">
 
-            <v-text-field label="Title"
-              v-model="form.data.title"
-              required counter maxlength="64">
+            <v-text-field label="Name"
+              v-model="form.data.name"
+              outlined required counter maxlength="32">
             </v-text-field>
-            <v-date-picker
-              v-model="form.data.date"
-              full-width show-adjacent-months>
-            </v-date-picker>
+            <v-text-field label="Score"
+              v-model="form.data.score"
+              type="number"
+              outlined required>
+            </v-text-field>
 
             <v-alert v-if="form.message != ''" dense>
               {{ form.message }}
@@ -58,7 +59,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import apiLevels from '@/api/levels'
 
 export default {
@@ -67,12 +67,12 @@ export default {
     loadingItems: false,
     headers: [
       {
-        text: 'Title',
-        value: 'title'
+        text: 'Name',
+        value: 'name'
       },
       {
-        text: 'Date',
-        value: 'date',
+        text: 'Score',
+        value: 'score',
       },
       {
         text: 'Actions',
@@ -82,7 +82,6 @@ export default {
     levels: [],
     form: {
       data: {
-        active: 0,
         title: '',
         date: ''
       },

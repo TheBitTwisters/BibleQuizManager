@@ -1,49 +1,42 @@
 <template>
-  <div id="biblequiz-games">
+  <div id="biblequiz-question-types">
 
     <v-card class="mb-5">
       <v-card-title>
-        Games
+        Question Types
       </v-card-title>
-      <v-data-table :headers="headers" :items="games" :loading="loadingItems">
-        <template v-slot:item.date="{ item }">
-          {{ item.date | formatDate }}
-        </template>
+      <v-data-table :headers="headers" :items="quest_types" :loading="loadingItems">
         <template v-slot:item.actions="{ item }">
           <v-btn text small color="primary"
-            @click="editGame(item)">
+            @click="editQuestType(item)">
             <v-icon left>mdi-pencil</v-icon>
             Edit
-          </v-btn>
-          <v-btn text small color="primary"
-            :to="`/game/${item.id}/questions`">
-            <v-icon left>mdi-pencil</v-icon>
-            Questions
           </v-btn>
         </template>
       </v-data-table>
       <v-card-actions>
-        <v-btn plain color="primary" @click="newGame">New</v-btn>
+        <v-btn plain color="primary" @click="newQuestType">New</v-btn>
       </v-card-actions>
     </v-card>
 
-    <!-- Game details dialog -->
+    <!-- QuestType details dialog -->
     <v-dialog v-model="form.show" persistent max-width="360">
       <v-card>
         <v-card-title>
-          Game
+          QuestType
         </v-card-title>
         <v-card-text>
-          <v-form v-model="form.valid" @submit.prevent="saveGame">
+          <v-form v-model="form.valid" @submit.prevent="saveQuestType">
 
-            <v-text-field label="Title"
-              v-model="form.data.title"
-              outlined required counter maxlength="64">
+            <v-text-field label="Name"
+              v-model="form.data.name"
+              outlined required counter maxlength="32">
             </v-text-field>
-            <v-date-picker
-              v-model="form.data.date"
-              full-width show-adjacent-months>
-            </v-date-picker>
+            <v-text-field label="# of choices"
+              v-model="form.data.choices_count"
+              type="number"
+              outlined required>
+            </v-text-field>
 
             <v-alert v-if="form.message != ''" dense>
               {{ form.message }}
@@ -53,7 +46,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" :disabled="!form.valid" @click="saveGame">
+          <v-btn color="primary" :disabled="!form.valid" @click="saveQuestType">
             Save
           </v-btn>
           <v-btn @click="form.show = false">
@@ -66,33 +59,31 @@
 </template>
 
 <script>
-import moment from 'moment'
-import apiGames from '@/api/games'
+import apiQuestTypes from '@/api/quest_types'
 
 export default {
-  name: 'view-games-list',
+  name: 'view-quest_types-list',
   data: () => ({
     loadingItems: false,
     headers: [
       {
-        text: 'Title',
-        value: 'title'
+        text: 'Name',
+        value: 'name'
       },
       {
-        text: 'Date',
-        value: 'date',
+        text: '# of Choices',
+        value: 'choices_count',
       },
       {
         text: 'Actions',
         value: 'actions'
       }
     ],
-    games: [],
+    quest_types: [],
     form: {
       data: {
-        active: 0,
-        title: '',
-        date: ''
+        name: '',
+        choices_count: ''
       },
       show: false,
       valid: false,
@@ -102,47 +93,45 @@ export default {
     },
   }),
   mounted () {
-    this.getGames()
+    this.getQuestTypes()
   },
   methods: {
-    getGames: function () {
+    getQuestTypes: function () {
       this.loadingItems = true
-      apiGames.getAll()
+      apiQuestTypes.getAll()
         .then(response => {
-          this.games = response.games
+          this.quest_types = response.quest_types
         }).catch(err => {
           console.log(err)
         }).finally(() => {
           this.loadingItems = false
         })
     },
-    newGame: function () {
+    newQuestType: function () {
       this.form.submitting = false
       this.form.message = ''
       this.form.success = false
       this.form.data = {
-        active: 0,
-        title: '',
-        date: ''
+        name: '',
+        choices_count: 1
       }
       this.form.show = true
     },
-    editGame: function (game) {
+    editQuestType: function (quest_type) {
       this.form.submitting = false
       this.form.message = ''
       this.form.success = false
-      this.form.data = game
-      this.form.data.date = moment(game.date).format('YYYY-MM-DD')
+      this.form.data = quest_type
       this.form.show = true
     },
-    saveGame: function () {
+    saveQuestType: function () {
       this.form.submitting = true
       this.form.message = ''
-      apiGames.saveGame(this.form.data)
+      apiQuestTypes.saveQuestType(this.form.data)
         .then(data => {
           if (!data.err) {
             this.form.show = false
-            this.getGames()
+            this.getQuestTypes()
           }
         })
         .catch(err => {
