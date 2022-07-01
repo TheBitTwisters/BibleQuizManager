@@ -15,7 +15,7 @@
         </template>
       </v-data-table>
       <v-card-actions>
-        <v-btn plain color="primary" @click="newLevel">New</v-btn>
+        <v-btn plain color="primary" @click="newLevel">New Level</v-btn>
       </v-card-actions>
     </v-card>
 

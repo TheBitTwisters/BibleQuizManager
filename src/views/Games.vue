@@ -23,7 +23,7 @@
         </template>
       </v-data-table>
       <v-card-actions>
-        <v-btn plain color="primary" @click="newGame">New</v-btn>
+        <v-btn plain color="primary" @click="newGame">New Game</v-btn>
       </v-card-actions>
     </v-card>
 

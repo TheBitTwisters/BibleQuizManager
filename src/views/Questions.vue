@@ -24,8 +24,12 @@
           </v-btn>
         </template>
       </v-data-table>
+      <v-card-text>
+        Total score to gain:
+        <strong>{{ totalScore }}</strong>
+      </v-card-text>
       <v-card-actions>
-        <v-btn plain color="primary" @click="newQuestion">New</v-btn>
+        <v-btn plain color="primary" @click="newQuestion">New Question</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -130,6 +134,10 @@ export default {
         value: 'type_id',
       },
       {
+        text: 'Score to gain',
+        value: 'score',
+      },
+      {
         text: 'Actions',
         value: 'actions'
       }
@@ -157,6 +165,15 @@ export default {
       success: false
     },
   }),
+  computed: {
+    totalScore: function () {
+      var total = 0
+      for (let question of this.questions) {
+        total += question.score
+      }
+      return total
+    }
+  },
   mounted () {
     this.getLevels()
     this.getQuestTypes()
