@@ -1,11 +1,11 @@
 import axios from '@/plugins/axios'
 import store from '@/store'
 
-const getAll = () => {
+const getAllGamesScores = () => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url: '/games/all',
+      url: '/scores/all',
       headers: {
         'Authorization': store.getters.getSessionToken()
       }
@@ -20,36 +20,13 @@ const getAll = () => {
   })
 }
 
-const setGameQuestion = (params) => {
+const getGameScores = (params) => {
   return new Promise((resolve, reject) => {
     axios({
-      method: 'post',
-      url: '/games/question',
+      method: 'get',
+      url: '/scores/game',
       data: {
-        game_id: params.game_id,
-        question_id: params.question_id
-      },
-      headers: {
-        'Authorization': store.getters.getSessionToken()
-      }
-    }).then(response => {
-      resolve(response.data)
-    }).catch(err => {
-      if (err.response.data) {
-        reject(err.response.data)
-      }
-      reject(err)
-    })
-  })
-}
-
-const saveGame = (params) => {
-  return new Promise((resolve, reject) => {
-    axios({
-      method: params.id ? 'put' : 'post',
-      url: `/games/${params.id ? params.id : 'save'}`,
-      data: {
-        game: params
+        game_id: params.game_id
       },
       headers: {
         'Authorization': store.getters.getSessionToken()
@@ -66,7 +43,6 @@ const saveGame = (params) => {
 }
 
 export default {
-  getAll,
-  setGameQuestion,
-  saveGame
+  getAllGamesScores,
+  getGameScores
 }

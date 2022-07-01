@@ -1,239 +1,86 @@
 <template>
   <div id="biblequiz-play-question">
 
-    <v-card>
-      <v-card-title>
-        Current Question
-      </v-card-title>
-      <v-data-table :headers="headers" :items="questions" :loading="loadingItems">
-        <template v-slot:item.level_id="{ item }">
-          {{ getLevelByID(item.level_id) }}
-        </template>
-        <template v-slot:item.type_id="{ item }">
-          {{ getQuestTypeByID(item.type_id) }}
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-btn text small color="primary"
-            @click="editQuestion(item)">
-            <v-icon left>mdi-pencil</v-icon>
-            Edit
-          </v-btn>
-        </template>
-      </v-data-table>
-      <v-card-actions>
-        <v-btn plain color="primary" @click="newQuestion">Next Question</v-btn>
-      </v-card-actions>
-    </v-card>
+    <div v-if="question">
+      <v-card>
+        <v-card-title>
+          <span>Question #{{question.row_number}}</span>
+          <v-spacer></v-spacer>
+          <span>{{level.name}} | {{questType.name}}</span>
+        </v-card-title>
+        <v-card-text>
+          <div class="headline">
+            {{question.question}}
+          </div>
+        </v-card-text>
+        <v-card-text>
+          <div class="subtitle">
+            Reference: {{question.reference}}
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn plain color="primary" @click="nextQuestion">Next Question</v-btn>
+        </v-card-actions>
+      </v-card>
+    </div>
+    <div v-else>
+      <v-card>
+        <v-card-title>
+          Game not started or finished
+        </v-card-title>
+        <v-card-actions>
+          <v-btn plain color="primary" @click="startQuestion">Start</v-btn>
+        </v-card-actions>
+      </v-card>
+    </div>
 
   </div>
 </template>
 
 <script>
-import apiLevels from '@/api/levels'
-import apiQuestTypes from '@/api/quest_types'
-import apiQuestions from '@/api/questions'
+import store from '@/store'
 
 export default {
-  name: 'view-play',
-  props: {
-    game_id: {
-      type: String
-    }
-  },
+  name: 'view-play-question',
   computed: {
-    currentQuestion: function () {
-      if (this.questions.length > 0) {
-        for (let question of this.questions) {
-          if (this.game.current_question_id == question.id) {
-            return question
-          }
+    question: () => store.getters.getPlayCurrentQuestion(),
+    level: function () {
+      for (let level of store.getters.getPlayLevels()) {
+        if (this.question && this.question.level_id == level.id) {
+          return level
         }
-        return this.questions[0]
+      }
+      return {}
+    },
+    questType: function () {
+      for (let type of store.getters.getPlayQuestTypes()) {
+        if (this.question && this.question.type_id == type.id) {
+          return type
+        }
       }
       return {}
     }
   },
   data: () => ({
-    loading: {
-      scores: false
-    },
-    headers: [
-      {
-        text: 'Player',
-        value: 'player_id'
-      },
-      {
-        text: 'Score',
-        value: 'score',
-      }
-    ],
-    game: {},
-    levels: [],
-    quest_types: [],
-    questions: [],
-    form: {
-      data: {
-        id: 0,
-        active: 0,
-        game_id: 0,
-        level_id: 0,
-        type_id: 0,
-        question: '',
-        score: 1,
-        choices: [],
-        answer: -1
-      },
-      show: false,
-      valid: false,
-      submitting: false,
-      message: '',
-      success: false
-    },
   }),
-  mounted () {
-    this.getLevels()
-    this.getQuestTypes()
-    this.getQuestions()
-  },
+  mounted () {},
   methods: {
-    getLevels: function () {
-      this.loadingItems = true
-      apiLevels.getAll()
-        .then(response => {
-          this.levels = response.levels
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingItems = false
-        })
-    },
-    getLevelByID: function (level_id) {
-      for (let level of this.levels) {
-        if (level.id == level_id) {
-          return level.name
+    nextQuestion: function () {
+      var isNext = false
+      for (let question of store.state.questions) {
+        if (isNext) {
+          store.dispatch('play-next-question', {
+            question_id: question.id
+          })
+          break
         }
-      }
-      return ''
-    },
-    getQuestTypes: function () {
-      this.loadingItems = true
-      apiQuestTypes.getAll()
-        .then(response => {
-          this.quest_types = response.quest_types
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingItems = false
-        })
-    },
-    getQuestTypeByID: function (type_id) {
-      for (let quest_type of this.quest_types) {
-        if (quest_type.id == type_id) {
-          return quest_type.name
-        }
-      }
-      return ''
-    },
-    getQuestions: function () {
-      this.loadingItems = true
-      apiQuestions.getGameQuestions({ game_id: this.game_id })
-        .then(response => {
-          this.game = response.game
-          this.questions = response.questions
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingItems = false
-        })
-    },
-    newQuestion: function () {
-      this.form.submitting = false
-      this.form.message = ''
-      this.form.success = false
-      this.form.data = {
-        id: 0,
-        active: 1,
-        game_id: this.game_id,
-        level_id:0,
-        type_id: 0,
-        score: 0,
-        question: '',
-        reference: '',
-        choices: [],
-        answer: -1
-      }
-      this.form.show = true
-    },
-    editQuestion: function (question) {
-      this.form.submitting = false
-      this.form.message = ''
-      this.form.success = false
-      this.form.data = question
-      var i = 0
-      for (let choice of this.form.data.choices) {
-        choice.num = i
-        if (choice.is_answer == 1) {
-          this.form.data.answer = i
-        }
-        i++
-      }
-      this.form.show = true
-    },
-    saveQuestion: function () {
-      this.form.submitting = true
-      this.form.message = ''
-      var data = {
-        id: this.form.data.id,
-        active: this.form.data.active,
-        game_id: this.game_id,
-        level_id: this.form.data.level_id,
-        type_id: this.form.data.type_id,
-        score: this.form.data.score,
-        question: this.form.data.question,
-        reference: this.form.data.reference,
-        choices: []
-      }
-      for (let choice of this.form.data.choices) {
-        data.choices.push({
-          value: choice.value,
-          is_answer: this.form.data.answer == choice.num ? 1 : 0
-        })
-      }
-      apiQuestions.saveQuestion(data)
-        .then(data => {
-          if (!data.err) {
-            this.form.show = false
-            this.getQuestions()
-          }
-        })
-        .catch(err => {
-          console.log(err)
-          this.form.message = err.message
-        })
-        .finally(() => {
-          this.form.submitting = false
-        })
-    },
-    changeLevel: function (level_id) {
-      for (let level of this.levels) {
-        if (level.id == level_id) {
-          this.form.data.score = level.score
+        if (question.id == this.question.id) {
+          isNext = true
         }
       }
     },
-    changeQuestType: function (type_id) {
-      for (let type of this.quest_types) {
-        if (type.id == type_id) {
-          this.form.data.choices = []
-          for (let i = 0; i < type.choices_count; i++) {
-            this.form.data.choices.push({
-              num: i,
-              value: '',
-              is_answer: 0
-            })
-          }
-        }
-      }
+    startQuestion: function () {
+      store.dispatch('play-start-question')
     }
   }
 }

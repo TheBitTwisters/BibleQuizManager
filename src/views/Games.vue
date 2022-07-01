@@ -20,6 +20,11 @@
             <v-icon left>mdi-pencil</v-icon>
             Questions
           </v-btn>
+          <v-btn text small color="primary"
+            :to="`/play/${item.id}`">
+            <v-icon left>mdi-play</v-icon>
+            Play
+          </v-btn>
         </template>
       </v-data-table>
       <v-card-actions>

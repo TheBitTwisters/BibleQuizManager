@@ -27,8 +27,9 @@ const routes = [
     component: ViewDashboard
   },
   {
-    path: '/play',
+    path: '/play/:game_id',
     name: 'Play',
+    props: true,
     component: ViewPlayControl
   },
   {
