@@ -10,8 +10,11 @@
         Questions
       </v-card-title>
       <v-data-table :headers="headers" :items="questions" :loading="loadingItems">
-        <template v-slot:item.date="{ item }">
-          {{ item.date | formatDate }}
+        <template v-slot:item.level_id="{ item }">
+          {{ getLevelByID(item.level_id) }}
+        </template>
+        <template v-slot:item.type_id="{ item }">
+          {{ getQuestTypeByID(item.type_id) }}
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn text small color="primary"
@@ -111,12 +114,20 @@ export default {
     loadingItems: false,
     headers: [
       {
+        text: '#',
+        value: 'row_number'
+      },
+      {
         text: 'Question',
         value: 'question'
       },
       {
-        text: 'Date',
-        value: 'date',
+        text: 'Level',
+        value: 'level_id',
+      },
+      {
+        text: 'Question Type',
+        value: 'type_id',
       },
       {
         text: 'Actions',
@@ -129,6 +140,7 @@ export default {
     questions: [],
     form: {
       data: {
+        id: 0,
         active: 0,
         game_id: 0,
         level_id: 0,
@@ -162,6 +174,14 @@ export default {
           this.loadingItems = false
         })
     },
+    getLevelByID: function (level_id) {
+      for (let level of this.levels) {
+        if (level.id == level_id) {
+          return level.name
+        }
+      }
+      return ''
+    },
     getQuestTypes: function () {
       this.loadingItems = true
       apiQuestTypes.getAll()
@@ -172,6 +192,14 @@ export default {
         }).finally(() => {
           this.loadingItems = false
         })
+    },
+    getQuestTypeByID: function (type_id) {
+      for (let quest_type of this.quest_types) {
+        if (quest_type.id == type_id) {
+          return quest_type.name
+        }
+      }
+      return ''
     },
     getQuestions: function () {
       this.loadingItems = true
@@ -190,6 +218,7 @@ export default {
       this.form.message = ''
       this.form.success = false
       this.form.data = {
+        id: 0,
         active: 1,
         game_id: this.game_id,
         level_id:0,
@@ -197,7 +226,8 @@ export default {
         score: 0,
         question: '',
         reference: '',
-        choices: []
+        choices: [],
+        answer: -1
       }
       this.form.show = true
     },
@@ -206,12 +236,21 @@ export default {
       this.form.message = ''
       this.form.success = false
       this.form.data = question
+      var i = 0
+      for (let choice of this.form.data.choices) {
+        choice.num = i
+        if (choice.is_answer == 1) {
+          this.form.data.answer = i
+        }
+        i++
+      }
       this.form.show = true
     },
     saveQuestion: function () {
       this.form.submitting = true
       this.form.message = ''
       var data = {
+        id: this.form.data.id,
         active: this.form.data.active,
         game_id: this.game_id,
         level_id: this.form.data.level_id,
