@@ -36,7 +36,9 @@ const session = {
     'session-logout': function ({ commit }) {
       commit('SET_SESSION', {})
       commit('SET_SESSION_MANAGER', {})
-      router.push({ name: 'Login' })
+      if (router.currentRoute.name != 'Login') {
+        router.push({ name: 'Login' })
+      }
     },
   },
   getters: {
