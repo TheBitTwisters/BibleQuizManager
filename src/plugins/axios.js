@@ -27,7 +27,7 @@ instance.interceptors.response.use(
     }
     return response
   }, (err) => {
-    if (err.response.status == 403) {
+    if (err.code == "ERR_NETWORK" || err.response.status == 403) {
       store.dispatch('session-logout')
     }
     return Promise.reject(err)
