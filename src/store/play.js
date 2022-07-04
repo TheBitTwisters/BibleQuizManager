@@ -9,7 +9,14 @@ const session = {
     levels: [],
     quest_types: [],
     questions: [],
-    players: []
+    players: [],
+    monitor: {
+      question: {
+        show: false,
+        choices: false,
+        reveal: false
+      }
+    }
   },
   mutations: {
     SET_PLAY_GAME (state, game) {
@@ -31,7 +38,22 @@ const session = {
     },
     SET_PLAY_ATTENDANCE (state, players) {
       state.players = players || []
-    }
+    },
+    HIDE_MONITOR_QUESTION (state) {
+      state.monitor.question.show = false
+      state.monitor.question.choices = false
+      state.monitor.question.reveal = false
+    },
+    SHOW_MONITOR_QUESTION (state) {
+      state.monitor.question.show = true
+    },
+    SHOW_MONITOR_QUESTION_CHOICES (state) {
+      state.monitor.question.choices = true
+    },
+    SHOW_MONITOR_REVEAL_ANSWER (state) {
+      state.monitor.question.choices = false
+      state.monitor.question.reveal = true
+    },
   },
   actions: {
     'play-game': function ({ commit }, params) {
@@ -54,6 +76,7 @@ const session = {
           question_id: state.questions[0].id
         }).then(response => {
           commit('SET_PLAY_GAME', response.game)
+          commit('SHOW_MONITOR_QUESTION')
         })
       }
     },
@@ -64,6 +87,9 @@ const session = {
       }).then(response => {
         commit('SET_PLAY_GAME', response.game)
       })
+    },
+    'play-reveal-answer': function ({ commit }) {
+      commit('SHOW_MONITOR_REVEAL_ANSWER')
     }
   },
   getters: {
@@ -83,6 +109,23 @@ const session = {
         }
       }
       return null
+    },
+    getPlayCurrentQuestionChoices: (state) => () => {
+      for (let question of state.questions) {
+        if (question.id == state.game.current_question_id) {
+          return question.choices
+        }
+      }
+      return []
+    },
+    shouldMonitorShowQuestion: (state) => () => {
+      return state.monitor.question.show
+    },
+    shouldMonitorShowQuestionChoices: (state) => () => {
+      return state.monitor.question.choices
+    },
+    shouldMonitorRevealAnswer: (state) => () => {
+      return state.monitor.question.reveal
     }
   }
 }

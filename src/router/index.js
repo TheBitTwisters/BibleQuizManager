@@ -12,6 +12,7 @@ import ViewQuestions from '@/views/Questions'
 import ViewDashboard from '@/views/Dashboard'
 
 import ViewPlayControl from '@/views/play/Control'
+import ViewPlayMonitor from '@/views/play/Monitor'
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,11 @@ const routes = [
     name: 'Play',
     props: true,
     component: ViewPlayControl
+  },
+  {
+    path: '/monitor',
+    name: 'PlayMonitor',
+    component: ViewPlayMonitor
   },
   {
     path: '/games',

@@ -10,7 +10,7 @@
         <CurrentQuestion/>
       </v-col>
       <v-col lg="3">
-        <Scores game_id="game_id"/>
+        <Scores :game_id="game.id"/>
       </v-col>
     </v-row>
   </div>
