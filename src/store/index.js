@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
+import ModApp from './app'
 import ModSession from './session'
 import ModPlay from './play'
 
@@ -13,6 +14,7 @@ const vuexLocal = new VuexPersistence({
 
 export default new Vuex.Store({
   modules: {
+    app: ModApp,
     session: ModSession,
     play: ModPlay
   },

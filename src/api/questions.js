@@ -3,10 +3,8 @@ import store from '@/store'
 
 const getGameQuestions = (params) => {
   return new Promise((resolve, reject) => {
-    axios({
-      method: 'get',
-      url: '/questions/all',
-      data: {
+    axios.get('/questions/all', {
+      params: {
         game_id: params.game_id
       },
       headers: {

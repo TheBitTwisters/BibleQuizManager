@@ -1,5 +1,5 @@
 <template>
-  <div id="biblequiz-levels">
+  <div id="biblequiz-rules-levels">
 
     <v-card class="mb-5">
       <v-card-title>

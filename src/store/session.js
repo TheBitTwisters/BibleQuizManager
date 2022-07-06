@@ -42,6 +42,9 @@ const session = {
     },
   },
   getters: {
+    isSessionActive: (state) => () => {
+      return state.expiresIn > 0 && state.token.length > 0
+    },
     getSessionToken: (state) => () => {
       return state.token
     }

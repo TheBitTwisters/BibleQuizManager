@@ -5,9 +5,9 @@ import ViewLogin from '@/views/Login'
 
 import ViewGames from '@/views/Games'
 import ViewPlayers from '@/views/Players'
-import ViewLevels from '@/views/Levels'
-import ViewQuestTypes from '@/views/QuestTypes'
 import ViewQuestions from '@/views/Questions'
+
+import ViewRules from '@/views/rules/Index'
 
 import ViewDashboard from '@/views/Dashboard'
 
@@ -49,14 +49,9 @@ const routes = [
     component: ViewPlayers
   },
   {
-    path: '/levels',
-    name: 'Levels',
-    component: ViewLevels
-  },
-  {
-    path: '/quest_types',
-    name: 'QuestionTypes',
-    component: ViewQuestTypes
+    path: '/rules',
+    name: 'Rules',
+    component: ViewRules
   },
   {
     path: '/game/:game_id/questions',

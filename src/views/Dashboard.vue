@@ -3,10 +3,6 @@
     <h1 class="my-5">Bible Quiz Manager</h1>
     <v-row>
       <v-col cols="12" lg="6" xl="4">
-        <Levels/>
-        <QuestTypes/>
-      </v-col>
-      <v-col cols="12" lg="6" xl="4">
         <Games/>
       </v-col>
       <v-col cols="12" lg="6" xl="4">
@@ -19,16 +15,12 @@
 <script>
 import Games from '@/views/Games'
 import Players from '@/views/Players'
-import Levels from '@/views/Levels'
-import QuestTypes from '@/views/QuestTypes'
 
 export default {
   name: 'view-dashboard',
   components: {
     Games,
-    Players,
-    Levels,
-    QuestTypes
+    Players
   }
 }
 </script>
