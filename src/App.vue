@@ -3,7 +3,7 @@
     <Appbar/>
     <NavDrawer/>
     <v-main class="grey lighten-2">
-      <v-container class="py-8 px-6">
+      <v-container>
         <router-view/>
       </v-container>
     </v-main>

@@ -21,7 +21,7 @@
             Questions
           </v-btn>
           <v-btn text small color="primary"
-            :to="`/play/${item.id}`">
+            @click="playGame(item.id)">
             <v-icon left>mdi-play</v-icon>
             Play
           </v-btn>
@@ -72,6 +72,7 @@
 
 <script>
 import moment from 'moment'
+import store from '@/store'
 import apiGames from '@/api/games'
 
 export default {
@@ -157,6 +158,9 @@ export default {
         .finally(() => {
           this.form.submitting = false
         })
+    },
+    playGame: function (game_id) {
+      store.dispatch('play-game', { game_id: game_id })
     }
   }
 }

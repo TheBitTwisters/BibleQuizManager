@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app fixed>
+  <v-app-bar app fixed v-model="showBar">
     <v-app-bar-nav-icon @click.stop="toggleDrawer"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
     <!-- notification -->
@@ -42,6 +42,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import store from '@/store'
+import router from '@/router'
 
 export default {
   name: 'component-appbar',
@@ -51,7 +52,10 @@ export default {
   computed: {
     ...mapGetters([
       'isSessionActive'
-    ])
+    ]),
+    showBar: function () {
+      return router.currentRoute.name != 'Monitor'
+    }
   },
   methods: {
     toggleDrawer: () => {

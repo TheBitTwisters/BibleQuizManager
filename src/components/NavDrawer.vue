@@ -33,17 +33,17 @@
 <script>
 import { mapGetters } from 'vuex'
 import store from '@/store'
+import router from '@/router'
 
 export default {
   name: 'component-navdrawer',
   computed: {
     showDrawer: {
-      get: () => store.state.app.drawer,
+      get: () => router.currentRoute.name != 'Monitor' && store.state.app.drawer,
       set: (val) => store.commit('SET_APP_DRAWER', val)
     },
     ...mapGetters([
-      'isSessionActive',
-      'isAppDrawerActive'
+      'isSessionActive'
     ])
   },
   data: () => ({

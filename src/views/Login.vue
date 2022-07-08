@@ -45,6 +45,9 @@ export default {
       success: false
     }
   }),
+  beforeMount () {
+    store.commit('SET_APP_DRAWER', false)
+  },
   methods: {
     login: function () {
       this.form.submitting = true

@@ -6,11 +6,14 @@
     </div>
 
     <v-row>
-      <v-col lg="6">
+      <v-col lg="2">
+        <Controls/>
+      </v-col>
+      <v-col lg="8">
         <CurrentQuestion/>
       </v-col>
-      <v-col lg="3">
-        <Scores :game_id="game.id"/>
+      <v-col lg="2">
+        <Scores/>
       </v-col>
     </v-row>
   </div>
@@ -18,25 +21,22 @@
 
 <script>
 import store from '@/store'
+import Controls from './Controls'
 import CurrentQuestion from './CurrentQuestion'
 import Scores from './Scores'
 
 export default {
   name: 'view-play',
-  props: {
-    game_id: {
-      type: String
-    }
-  },
   components: {
+    Controls,
     CurrentQuestion,
     Scores
   },
   computed: {
-    game: () => store.getters.getPlayGame()
+    game: () => store.state.play.game
   },
-  beforeMount () {
-    store.dispatch('play-game', { game_id: this.game_id })
+  mounted () {
+    store.commit('SET_APP_DRAWER', false)
   },
   methods: {
   }

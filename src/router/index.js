@@ -11,8 +11,8 @@ import ViewRules from '@/views/rules/Index'
 
 import ViewDashboard from '@/views/Dashboard'
 
-import ViewPlayControl from '@/views/play/Control'
-import ViewPlayMonitor from '@/views/play/Monitor'
+import ViewPlay from '@/views/play/View'
+import ViewMonitor from '@/views/monitor/View'
 
 Vue.use(VueRouter)
 
@@ -28,15 +28,14 @@ const routes = [
     component: ViewDashboard
   },
   {
-    path: '/play/:game_id',
+    path: '/play',
     name: 'Play',
-    props: true,
-    component: ViewPlayControl
+    component: ViewPlay
   },
   {
     path: '/monitor',
-    name: 'PlayMonitor',
-    component: ViewPlayMonitor
+    name: 'Monitor',
+    component: ViewMonitor
   },
   {
     path: '/games',

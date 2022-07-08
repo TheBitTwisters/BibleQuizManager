@@ -13,7 +13,7 @@
             {{question.question}}
           </div>
         </v-card-text>
-        <v-card-text class="text-center" v-if="revealAnswer">
+        <v-card-text class="text-center">
           <div class="d-inline-block success title white--text rounded px-5">
             {{answer}}
           </div>
@@ -68,31 +68,12 @@ export default {
         }
       }
       return ''
-    },
-    showQuestionChoices: () => store.getters.shouldMonitorShowQuestionChoices(),
-    revealAnswer: () => store.getters.shouldMonitorRevealAnswer()
+    }
   },
   data: () => ({
   }),
   mounted () {},
   methods: {
-    nextQuestion: function () {
-      var isNext = false
-      for (let question of store.state.questions) {
-        if (isNext) {
-          store.dispatch('play-next-question', {
-            question_id: question.id
-          })
-          break
-        }
-        if (question.id == this.question.id) {
-          isNext = true
-        }
-      }
-    },
-    startQuestion: function () {
-      store.dispatch('play-start-question')
-    }
   }
 }
 </script>

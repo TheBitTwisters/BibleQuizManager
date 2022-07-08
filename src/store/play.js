@@ -1,92 +1,42 @@
+import router from '@/router'
 import apiGames from '@/api/games'
 import apiLevels from '@/api/levels'
 import apiQuestTypes from '@/api/quest_types'
 import apiQuestions from '@/api/questions'
 
-const session = {
+const play = {
   state: {
-    game: {},
+    game: null,
     levels: [],
     quest_types: [],
     questions: [],
-    players: [],
-    monitor: {
-      question: {
-        show: false,
-        choices: false,
-        reveal: false
-      }
-    }
+    players: []
   },
-  mutations: {
-    SET_PLAY_GAME (state, game) {
-      state.game = game || {
-        id: 0,
-        title: '',
-        date: '',
-        current_question_id: -1
-      }
-    },
-    SET_PLAY_LEVELS (state, levels) {
-      state.levels = levels || []
-    },
-    SET_PLAY_QUEST_TYPES (state, quest_types) {
-      state.quest_types = quest_types || []
-    },
-    SET_PLAY_QUESTIONS (state, questions) {
-      state.questions = questions || []
-    },
-    SET_PLAY_ATTENDANCE (state, players) {
-      state.players = players || []
-    },
-    HIDE_MONITOR_QUESTION (state) {
-      state.monitor.question.show = false
-      state.monitor.question.choices = false
-      state.monitor.question.reveal = false
-    },
-    SHOW_MONITOR_QUESTION (state) {
-      state.monitor.question.show = true
-    },
-    SHOW_MONITOR_QUESTION_CHOICES (state) {
-      state.monitor.question.choices = true
-    },
-    SHOW_MONITOR_REVEAL_ANSWER (state) {
-      state.monitor.question.choices = false
-      state.monitor.question.reveal = true
-    },
-  },
+  mutations: {},
   actions: {
-    'play-game': function ({ commit }, params) {
+    'play-game': function ({ state }, params) {
       apiLevels.getAll().then(response => {
-        commit('SET_PLAY_LEVELS', response.levels)
+        state.levels = response.levels
       })
       apiQuestTypes.getAll().then(response => {
-        commit('SET_PLAY_QUEST_TYPES', response.quest_types)
+        state.quest_types = response.quest_types
       })
       apiQuestions.getGameQuestions({ game_id: params.game_id })
         .then(response => {
-          commit('SET_PLAY_GAME', response.game)
-          commit('SET_PLAY_QUESTIONS', response.questions)
+          state.game = response.game
+          state.questions = response.questions
+          router.push('/play')
         })
     },
-    'play-start-question': function ({ commit, state }) {
+    'play-question': function ({ state }) {
       if (state.questions.length > 0) {
         apiGames.setGameQuestion({
           game_id: state.game.id,
           question_id: state.questions[0].id
         }).then(response => {
-          commit('SET_PLAY_GAME', response.game)
-          commit('SHOW_MONITOR_QUESTION')
+          state.game = response.game
         })
       }
-    },
-    'play-next-question': function ({ commit, state }, params) {
-      apiGames.setGameQuestion({
-        game_id: state.game.id,
-        question_id: params.question_id
-      }).then(response => {
-        commit('SET_PLAY_GAME', response.game)
-      })
     },
     'play-reveal-answer': function ({ commit }) {
       commit('SHOW_MONITOR_REVEAL_ANSWER')
@@ -118,16 +68,13 @@ const session = {
       }
       return []
     },
-    shouldMonitorShowQuestion: (state) => () => {
-      return state.monitor.question.show
+    hasPlayGame: (state) => () => {
+      return state.game.id > 0
     },
-    shouldMonitorShowQuestionChoices: (state) => () => {
-      return state.monitor.question.choices
-    },
-    shouldMonitorRevealAnswer: (state) => () => {
-      return state.monitor.question.reveal
+    hasPlayCurrentQuestion: (state) => () => {
+      return state.game.current_question_id > 0
     }
   }
 }
 
-export default session
+export default play
