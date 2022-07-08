@@ -31,11 +31,13 @@ const session = {
       commit('SET_SESSION', params.session)
       commit('SET_SESSION_MANAGER', params.manager)
       commit('SET_GAMES', params.games)
+      commit('SET_APP_DRAWER', true)
       router.push({ name: 'Dashboard' })
     },
     'session-logout': function ({ commit }) {
       commit('SET_SESSION', {})
       commit('SET_SESSION_MANAGER', {})
+      commit('SET_APP_DRAWER', false)
       if (router.currentRoute.name != 'Login') {
         router.push({ name: 'Login' })
       }
