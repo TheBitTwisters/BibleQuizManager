@@ -57,6 +57,10 @@ export default {
         title: 'Games'
       },
       {
+        href: '/players',
+        title: 'Players'
+      },
+      {
         href: '/rules',
         title: 'Rules'
       },
