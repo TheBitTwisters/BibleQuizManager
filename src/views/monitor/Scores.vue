@@ -10,7 +10,7 @@
           <v-divider></v-divider>
           <v-list-item>
             <v-list-item-title class="d-flex font-weight-bold title">
-              <span>{{ getPlayerByID(topScore.player_id).name }}</span>
+              <span>{{ getPlayerByID(topScore.player_id).fullname }}</span>
               <v-spacer></v-spacer>
               <span>{{ topScore.score }}</span>
             </v-list-item-title>
@@ -29,11 +29,12 @@ import apiScores from '@/api/scores'
 export default {
   name: 'view-monitor-scores',
   computed: {
-    game: () => store.state.play.game,
+    monitorGame: () => store.state.monitor.game,
+    game: () => store.getters.getPlayGame(),
     topTenScores: function () {
       var scores = []
       for (let score of this.scores) {
-        if (scores.length > 10) {
+        if (scores.length >= 10) {
           break
         }
         scores.push(score)
@@ -48,16 +49,15 @@ export default {
     this.getScores()
   },
   methods: {
-    getScores: function () {
-      this.loadingScores = true
+    getScores: async function () {
+      var response = { scores: [] }
+      if (this.monitorGame && this.game.id > 0) {
+        response = await apiScores.getGameScores({ game_id: this.game.id })
+      } else {
+        response = await apiScores.getAllGamesScores()
+      }
       apiScores.getGameScores({ game_id: this.game.id })
-        .then(response => {
-          this.scores = response.scores
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingScores = false
-        })
+      this.scores = response.scores
     },
     getPlayerByID: function (player_id) {
       for (let player of store.state.play.players) {

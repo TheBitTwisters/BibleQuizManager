@@ -6,13 +6,13 @@
     </div>
 
     <v-row>
-      <v-col lg="2">
+      <v-col md="3" lg="2">
         <Controls/>
       </v-col>
-      <v-col lg="8">
-        <CurrentQuestion/>
+      <v-col md="6" lg="7">
+        <Questions/>
       </v-col>
-      <v-col lg="2">
+      <v-col md="3">
         <Scores/>
       </v-col>
     </v-row>
@@ -22,14 +22,14 @@
 <script>
 import store from '@/store'
 import Controls from './Controls'
-import CurrentQuestion from './CurrentQuestion'
+import Questions from './Questions'
 import Scores from './Scores'
 
 export default {
   name: 'view-play',
   components: {
     Controls,
-    CurrentQuestion,
+    Questions,
     Scores
   },
   computed: {

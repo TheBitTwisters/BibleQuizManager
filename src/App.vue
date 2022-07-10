@@ -3,7 +3,7 @@
     <Appbar/>
     <NavDrawer/>
     <v-main class="grey lighten-2">
-      <v-container>
+      <v-container fluid style="height: 100%;">
         <router-view/>
       </v-container>
     </v-main>

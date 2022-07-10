@@ -1,29 +1,30 @@
 <template>
-  <div id="biblequiz-play-monitor">
-    <v-responsive :aspect-ratio="16/9">
-      <v-row class="fill-height">
+  <div id="biblequiz-play-monitor" class="fill-height">
+    <v-row class="fill-height secondary" align="center" justify="center">
 
-        <v-col lg="8">
-          <Question v-if="showQuestion"/>
-        </v-col>
+      <v-col md="7" lg="8">
+        <Question v-if="showQuestion"/>
+        <Title v-else/>
+      </v-col>
 
-        <v-col lg="4">
-          <Scores v-if="showScores"/>
-        </v-col>
+      <v-col md="5" lg="4" v-if="showScores">
+        <Scores/>
+      </v-col>
 
-      </v-row>
-    </v-responsive>
+    </v-row>
   </div>
 </template>
 
 <script>
 import store from '@/store'
+import Title from './Title'
 import Question from './Question'
 import Scores from './Scores'
 
 export default {
   name: 'view-monitor',
   components: {
+    Title,
     Question,
     Scores
   },

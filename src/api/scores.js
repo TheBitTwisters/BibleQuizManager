@@ -25,7 +25,7 @@ const getGameScores = (params) => {
     axios({
       method: 'get',
       url: '/scores/game',
-      data: {
+      params: {
         game_id: params.game_id
       },
       headers: {

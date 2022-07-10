@@ -3,6 +3,7 @@ import apiGames from '@/api/games'
 import apiLevels from '@/api/levels'
 import apiQuestTypes from '@/api/quest_types'
 import apiQuestions from '@/api/questions'
+import apiPlayers from '@/api/players'
 
 const play = {
   state: {
@@ -25,14 +26,17 @@ const play = {
         .then(response => {
           state.game = response.game
           state.questions = response.questions
+          apiPlayers.getAttendance({ game_id: response.game.id }).then(response => {
+            state.players = response.players
+          })
           router.push('/play')
         })
     },
-    'play-question': function ({ state }) {
+    'play-question': function ({ state }, params) {
       if (state.questions.length > 0) {
         apiGames.setGameQuestion({
           game_id: state.game.id,
-          question_id: state.questions[0].id
+          question_id: params.question_id
         }).then(response => {
           state.game = response.game
         })
@@ -51,6 +55,9 @@ const play = {
     },
     getPlayQuestTypes: (state) => () => {
       return state.quest_types
+    },
+    getPlayQuestions: (state) => () => {
+        return state.questions
     },
     getPlayCurrentQuestion: (state) => () => {
       for (let question of state.questions) {

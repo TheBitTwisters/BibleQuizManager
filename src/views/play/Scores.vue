@@ -8,7 +8,10 @@
       <v-data-table :headers="headers"
         :items="scores" :loading="loadingScores">
         <template v-slot:item.player_id="{ item }">
-          {{ getPlayerByID(item.player_id).name }}
+          {{ getPlayerByID(item.player_id).fullname }}
+        </template>
+        <template v-slot:item.answer="{ item }">
+          {{ getPlayerAnswer(item.player_id) }}
         </template>
       </v-data-table>
     </v-card>
@@ -19,6 +22,7 @@
 <script>
 import store from '@/store'
 import apiScores from '@/api/scores'
+import apiAnswers from '@/api/answers'
 
 export default {
   name: 'view-play-scores',
@@ -35,17 +39,23 @@ export default {
       {
         text: 'Score',
         value: 'score',
+      },
+      {
+        text: 'Answer',
+        value: 'answer'
       }
     ],
-    scores: []
+    scores: [],
+    answers: []
   }),
   mounted () {
     this.getScores()
+    this.checkAnswers()
   },
   methods: {
     getScores: function () {
       this.loadingScores = true
-      apiScores.getGameScores({ game_id: this.game_id })
+      apiScores.getGameScores({ game_id: this.game.id })
         .then(response => {
           this.scores = response.scores
         }).catch(err => {
@@ -61,6 +71,25 @@ export default {
         }
       }
       return { name: 'Player' }
+    },
+    checkAnswers: function () {
+      apiAnswers.checkAnswers({ question_id: store.state.play.game.current_question_id })
+        .then(response => {
+          this.answers = response.answers
+          setTimeout(function () {
+            this.checkAnswers()
+          }, 1000)
+        }).catch(err => {
+          console.log(err)
+        })
+    },
+    getPlayerAnswer: function (player_id) {
+      for (let answer of this.answers) {
+        if (answer.player_id == player_id) {
+          return answer.answer
+        }
+      }
+      return ''
     }
   }
 }

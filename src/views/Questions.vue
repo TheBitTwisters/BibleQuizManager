@@ -283,6 +283,7 @@ export default {
           is_answer: this.form.data.answer == choice.num ? 1 : 0
         })
       }
+      console.log(data)
       apiQuestions.saveQuestion(data)
         .then(data => {
           if (!data.err) {
