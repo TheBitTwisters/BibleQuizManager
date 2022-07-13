@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 
 import ViewLogin from '@/views/Login'
 
-import ViewGames from '@/views/Games'
+import ViewGames from '@/views/list/Games'
 import ViewPlayers from '@/views/Players'
 import ViewQuestions from '@/views/Questions'
 

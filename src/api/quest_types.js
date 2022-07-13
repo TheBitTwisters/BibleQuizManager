@@ -5,7 +5,7 @@ const getAll = () => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url: '/quest_types/all',
+      url: '/quest-types',
       headers: {
         'Authorization': store.getters.getSessionToken()
       }
@@ -24,7 +24,7 @@ const saveQuestType = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: params.id ? 'put' : 'post',
-      url: `/quest_types/${params.id ? params.id : 'save'}`,
+      url: `/quest-types/${params.id ? params.id : 'save'}`,
       data: {
         quest_type: params
       },

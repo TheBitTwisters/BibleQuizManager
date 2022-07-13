@@ -2,8 +2,6 @@ import router from '@/router'
 import apiGames from '@/api/games'
 import apiLevels from '@/api/levels'
 import apiQuestTypes from '@/api/quest_types'
-import apiQuestions from '@/api/questions'
-import apiPlayers from '@/api/players'
 
 const play = {
   state: {
@@ -15,22 +13,25 @@ const play = {
   },
   mutations: {},
   actions: {
-    'play-game': function ({ state }, params) {
-      apiLevels.getAll().then(response => {
+    'play-game': async function ({ state, commit }, params) {
+      try {
+        var response = {}
+        response = await apiLevels.getAll()
         state.levels = response.levels
-      })
-      apiQuestTypes.getAll().then(response => {
+        response = await apiQuestTypes.getAll()
         state.quest_types = response.quest_types
-      })
-      apiQuestions.getGameQuestions({ game_id: params.game_id })
-        .then(response => {
-          state.game = response.game
-          state.questions = response.questions
-          apiPlayers.getAttendance({ game_id: response.game.id }).then(response => {
-            state.players = response.players
-          })
-          router.push('/play')
+        response = await apiGames.getDetails({ game_id: params.game_id })
+        state.game = response.game
+        response = await apiGames.getQuestions({ game_id: params.game_id })
+        state.questions = response.questions
+        router.push('/play')
+      } catch (err) {
+        console.log(err)
+        commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: err.message
         })
+      }
     },
     'play-question': function ({ state }, params) {
       if (state.questions.length > 0) {

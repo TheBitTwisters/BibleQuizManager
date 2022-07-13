@@ -50,10 +50,6 @@
               full-width show-adjacent-months>
             </v-date-picker>
 
-            <v-alert v-if="form.message != ''" dense>
-              {{ form.message }}
-            </v-alert>
-
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -96,14 +92,13 @@ export default {
     games: [],
     form: {
       data: {
-        active: 0,
+        id: 0,
         title: '',
         date: ''
       },
       show: false,
       valid: false,
       submitting: false,
-      message: '',
       success: false
     },
   }),
@@ -124,10 +119,9 @@ export default {
     },
     newGame: function () {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
       this.form.data = {
-        active: 0,
+        id: 0,
         title: '',
         date: ''
       }
@@ -135,29 +129,48 @@ export default {
     },
     editGame: function (game) {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
-      this.form.data = game
+      this.form.data = {
+        id: game.id,
+        title: game.title,
+        date: game.date
+      }
       this.form.data.date = moment(game.date).format('YYYY-MM-DD')
       this.form.show = true
     },
-    saveGame: function () {
+    saveGame: async function () {
       this.form.submitting = true
       this.form.message = ''
-      apiGames.saveGame(this.form.data)
-        .then(data => {
-          if (!data.err) {
-            this.form.show = false
-            this.getGames()
-          }
+      try {
+        var response = {}
+        if (this.form.data.id > 0) {
+          response = await apiGames.updateGame({
+            game_id: this.form.data.id,
+            game: {
+              title: this.form.data.title,
+              date: this.form.data.date
+            }
+          })
+        } else {
+          response = await apiGames.createGame(this.form.data)
+        }
+        store.commit('SHOW_SNACKBAR', {
+          status: 'success',
+          message: response.message
         })
-        .catch(err => {
-          console.log(err)
-          this.form.message = err.message
+        if (!response.err) {
+          this.form.show = false
+          this.getGames()
+        }
+      } catch(err) {
+        console.log(err)
+        store.commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: err.message
         })
-        .finally(() => {
-          this.form.submitting = false
-        })
+      } finally {
+        this.form.submitting = false
+      }
     },
     playGame: function (game_id) {
       store.dispatch('play-game', { game_id: game_id })

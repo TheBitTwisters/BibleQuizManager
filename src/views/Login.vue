@@ -17,10 +17,6 @@
           @finish="login">
         </v-otp-input>
 
-        <v-alert v-if="form.message != ''" dense>
-          {{ form.message }}
-        </v-alert>
-
       </v-form>
     </v-card-text>
   </v-card>
@@ -54,12 +50,18 @@ export default {
       this.form.message = ''
       apiAuth.login(this.form.data)
         .then(data => {
-          this.form.message = data.message
+          store.commit('SHOW_SNACKBAR', {
+            status: 'success',
+            message: data.message
+          })
           store.dispatch('session-login', data)
         })
         .catch(err => {
           console.log(err)
-          this.form.message = err.message
+          store.commit('SHOW_SNACKBAR', {
+            status: 'error',
+            message: err.message
+          })
         })
         .finally(() => {
           this.form.submitting = false

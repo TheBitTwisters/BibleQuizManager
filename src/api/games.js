@@ -5,7 +5,7 @@ const getAll = () => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url: '/games/all',
+      url: '/games',
       headers: {
         'Authorization': store.getters.getSessionToken()
       }
@@ -20,13 +20,50 @@ const getAll = () => {
   })
 }
 
-const setGameQuestion = (params) => {
+const getDetails = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'get',
+      url: '/games/' + params.game_id,
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
+const getQuestions = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'get',
+      url: `/games/${params.game_id}/questions`,
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
+const setCurrentQuestion = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
-      url: '/games/question',
+      url: `/games/${params.game_id}/question`,
       data: {
-        game_id: params.game_id,
         question_id: params.question_id
       },
       headers: {
@@ -43,11 +80,11 @@ const setGameQuestion = (params) => {
   })
 }
 
-const saveGame = (params) => {
+const createGame = (params) => {
   return new Promise((resolve, reject) => {
     axios({
-      method: params.id ? 'put' : 'post',
-      url: `/games/${params.id ? params.id : 'save'}`,
+      method: 'post',
+      url: '/games',
       data: {
         game: params
       },
@@ -65,8 +102,33 @@ const saveGame = (params) => {
   })
 }
 
+const updateGame = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'put',
+      url: `/games/${params.game_id}`,
+      data: {
+        game: params.game
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
 export default {
   getAll,
-  setGameQuestion,
-  saveGame
+  getDetails,
+  getQuestions,
+  setCurrentQuestion,
+  createGame,
+  updateGame
 }
