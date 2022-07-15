@@ -80,7 +80,7 @@ const setCurrentQuestion = (params) => {
   })
 }
 
-const createGame = (params) => {
+const create = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
@@ -102,7 +102,7 @@ const createGame = (params) => {
   })
 }
 
-const updateGame = (params) => {
+const update = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'put',
@@ -129,6 +129,6 @@ export default {
   getDetails,
   getQuestions,
   setCurrentQuestion,
-  createGame,
-  updateGame
+  create,
+  update
 }

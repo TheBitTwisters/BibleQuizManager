@@ -5,9 +5,9 @@ const create = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
-      url: '/questions/',
+      url: '/choices/',
       data: {
-        question: params
+        choice: params
       },
       headers: {
         'Authorization': store.getters.getSessionToken()
@@ -27,9 +27,9 @@ const update = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'put',
-      url: `/questions/${params.question_id}`,
+      url: `/choices/${params.choice_id}`,
       data: {
-        question: params
+        choice: params
       },
       headers: {
         'Authorization': store.getters.getSessionToken()

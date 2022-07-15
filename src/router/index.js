@@ -4,8 +4,8 @@ import VueRouter from 'vue-router'
 import ViewLogin from '@/views/Login'
 
 import ViewGames from '@/views/list/Games'
-import ViewPlayers from '@/views/Players'
-import ViewQuestions from '@/views/Questions'
+import ViewPlayers from '@/views/list/Players'
+import ViewGameQuestions from '@/views/list/Questions'
 
 import ViewRules from '@/views/rules/Index'
 
@@ -54,9 +54,9 @@ const routes = [
   },
   {
     path: '/game/:game_id/questions',
-    name: 'Questions',
+    name: 'GameQuestions',
     props: true,
-    component: ViewQuestions
+    component: ViewGameQuestions
   }
 ]
 

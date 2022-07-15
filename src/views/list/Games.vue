@@ -140,11 +140,10 @@ export default {
     },
     saveGame: async function () {
       this.form.submitting = true
-      this.form.message = ''
       try {
         var response = {}
         if (this.form.data.id > 0) {
-          response = await apiGames.updateGame({
+          response = await apiGames.update({
             game_id: this.form.data.id,
             game: {
               title: this.form.data.title,
@@ -152,7 +151,7 @@ export default {
             }
           })
         } else {
-          response = await apiGames.createGame(this.form.data)
+          response = await apiGames.create(this.form.data)
         }
         store.commit('SHOW_SNACKBAR', {
           status: 'success',

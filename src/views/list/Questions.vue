@@ -42,6 +42,11 @@
         <v-card-text>
           <v-form v-model="form.valid" @submit.prevent="saveQuestion">
 
+            <v-text-field label="Order #"
+              v-model="form.data.order"
+              type="number"
+              outlined required readonly>
+            </v-text-field>
             <v-select label="Level"
               :items="levels" item-text="name" item-value="id"
               v-model="form.data.level_id"
@@ -69,16 +74,17 @@
             </v-text-field>
 
             <label>Choices / Answer</label>
-            <v-radio-group
-              v-model="form.data.answer">
+            <v-radio-group mandatory name="answer" v-model="form.model.answer">
               <v-row v-for="choice of form.data.choices" :key="choice.num" class="mx-0" align="center">
-                <v-radio
-                  :value="choice.num"
-                  hide-details
-                ></v-radio>
-                <v-text-field
-                  v-model="choice.value">
-                </v-text-field>
+                <v-col cols="2">
+                  <v-radio name="answer" :value="choice.row" hide-details></v-radio>
+                </v-col>
+                <v-col cols="3">
+                  <v-text-field readonly v-model="choice.label"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field v-model="choice.value"></v-text-field>
+                </v-col>
               </v-row>
             </v-radio-group>
 
@@ -103,9 +109,12 @@
 </template>
 
 <script>
+import store from '@/store'
 import apiLevels from '@/api/levels'
 import apiQuestTypes from '@/api/quest_types'
+import apiGames from '@/api/games'
 import apiQuestions from '@/api/questions'
+import apiChoices from '@/api/choices'
 
 export default {
   name: 'view-questions-list',
@@ -149,19 +158,22 @@ export default {
     form: {
       data: {
         id: 0,
-        active: 0,
         game_id: 0,
         level_id: 0,
         type_id: 0,
+        order: 0,
         question: '',
+        reference: '',
+        layout: '',
         score: 1,
-        choices: [],
-        answer: -1
+        choices: []
+      },
+      model: {
+        answer: ''
       },
       show: false,
       valid: false,
       submitting: false,
-      message: '',
       success: false
     },
   }),
@@ -175,21 +187,26 @@ export default {
     }
   },
   mounted () {
-    this.getLevels()
-    this.getQuestTypes()
-    this.getQuestions()
+    this.getData()
   },
   methods: {
-    getLevels: function () {
+    getData: async function () {
       this.loadingItems = true
-      apiLevels.getAll()
-        .then(response => {
-          this.levels = response.levels
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingItems = false
-        })
+      try {
+        var response = {}
+        response = await apiGames.getDetails({ game_id: this.game_id })
+        this.game = response.game
+        response = await apiLevels.getAll()
+        this.levels = response.levels
+        response = await apiQuestTypes.getAll()
+        this.quest_types = response.quest_types
+        response = await apiGames.getQuestions({ game_id: this.game_id })
+        this.questions = response.questions
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.loadingItems = false
+      }
     },
     getLevelByID: function (level_id) {
       for (let level of this.levels) {
@@ -199,17 +216,6 @@ export default {
       }
       return ''
     },
-    getQuestTypes: function () {
-      this.loadingItems = true
-      apiQuestTypes.getAll()
-        .then(response => {
-          this.quest_types = response.quest_types
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingItems = false
-        })
-    },
     getQuestTypeByID: function (type_id) {
       for (let quest_type of this.quest_types) {
         if (quest_type.id == type_id) {
@@ -218,86 +224,116 @@ export default {
       }
       return ''
     },
-    getQuestions: function () {
-      this.loadingItems = true
-      apiQuestions.getGameQuestions({ game_id: this.game_id })
-        .then(response => {
-          this.game = response.game
-          this.questions = response.questions
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingItems = false
-        })
-    },
     newQuestion: function () {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
       this.form.data = {
         id: 0,
-        active: 1,
         game_id: this.game_id,
-        level_id:0,
+        level_id: 0,
         type_id: 0,
-        score: 0,
+        order: 0,
         question: '',
         reference: '',
-        choices: [],
-        answer: -1
+        layout: '',
+        score: 1,
+        choices: []
+      }
+      if (this.questions.length > 0) {
+        var lastQuestion = this.questions[this.questions.length - 1]
+        // set next
+        this.form.data.order = this.questions.length + 1
+        this.form.data.level_id = lastQuestion.level_id
+        this.form.data.type_id = lastQuestion.type_id
+        this.changeLevel(lastQuestion.level_id)
+        this.changeQuestType(lastQuestion.type_id)
       }
       this.form.show = true
     },
     editQuestion: function (question) {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
-      this.form.data = question
-      var i = 0
-      for (let choice of this.form.data.choices) {
-        choice.num = i
-        if (choice.is_answer == 1) {
-          this.form.data.answer = i
-        }
-        i++
-      }
+      this.form.data.id = question.id
+      this.form.data.level_id = question.level_id,
+      this.form.data.type_id = question.type_id,
+      this.form.data.order = question.order,
+      this.form.data.question = question.question,
+      this.form.data.reference = question.reference,
+      this.form.data.layout = question.layout,
+      this.form.data.score = question.score,
+      this.form.data.choices = question.choices
       this.form.show = true
     },
-    saveQuestion: function () {
+    saveQuestion: async function () {
       this.form.submitting = true
-      this.form.message = ''
-      var data = {
-        id: this.form.data.id,
-        active: this.form.data.active,
-        game_id: this.game_id,
-        level_id: this.form.data.level_id,
-        type_id: this.form.data.type_id,
-        score: this.form.data.score,
-        question: this.form.data.question,
-        reference: this.form.data.reference,
-        choices: []
+      try {
+        var response = {}
+        if (this.form.data.id > 0) {
+          response = await apiQuestions.update({
+            question_id: this.form.data.id,
+            question: {
+              level_id: this.form.data.level_id,
+              type_id: this.form.data.type_id,
+              order: this.form.data.order,
+              question: this.form.data.question,
+              reference: this.form.data.reference,
+              layout: this.form.data.layout,
+              score: this.form.data.score
+            }
+          })
+        } else {
+          response = await apiQuestions.create(this.form.data)
+        }
+        store.commit('SHOW_SNACKBAR', {
+          status: 'success',
+          message: response.message
+        })
+        if (!response.err) {
+          await this.saveChoices()
+          this.form.show = false
+          this.getData()
+        }
+      } catch(err) {
+        console.log(err)
+        if (this.form.data.id > 0) {
+          await this.saveChoices();
+        }
+        store.commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: err.message
+        })
+      } finally {
+        this.form.submitting = false
       }
+    },
+    saveChoices: async function () {
       for (let choice of this.form.data.choices) {
-        data.choices.push({
-          value: choice.value,
-          is_answer: this.form.data.answer == choice.num ? 1 : 0
-        })
-      }
-      console.log(data)
-      apiQuestions.saveQuestion(data)
-        .then(data => {
-          if (!data.err) {
-            this.form.show = false
-            this.getQuestions()
+        try {
+          var response = {}
+          if (choice.id > 0) {
+            response = await apiChoices.update({
+              choice_id: this.form.data.id,
+              choice: {
+                label: choice.label,
+                value: choice.value,
+                is_answer: this.form.model.answer == choice.row ? 1 : 0
+              }
+            })
+          } else {
+            response = await apiChoices.create(choice)
           }
-        })
-        .catch(err => {
+          store.commit('SHOW_SNACKBAR', {
+            status: 'success',
+            message: response.message
+          })
+        } catch(err) {
           console.log(err)
-          this.form.message = err.message
-        })
-        .finally(() => {
-          this.form.submitting = false
-        })
+          store.commit('SHOW_SNACKBAR', {
+            status: 'error',
+            message: err.message
+          })
+        }
+      }
     },
     changeLevel: function (level_id) {
       for (let level of this.levels) {
@@ -310,12 +346,24 @@ export default {
       for (let type of this.quest_types) {
         if (type.id == type_id) {
           this.form.data.choices = []
-          for (let i = 0; i < type.choices_count; i++) {
-            this.form.data.choices.push({
-              num: i,
+          for (let i = 1; i <= type.choices_count; i++) {
+            var choice = {
+              row: i,
+              label: '',
               value: '',
               is_answer: 0
-            })
+            }
+            if (type.choices_count == 4) {
+              if (i == 1) choice.label = 'A'
+              if (i == 2) choice.label = 'B'
+              if (i == 3) choice.label = 'C'
+              if (i == 4) choice.label = 'D'
+            }
+            if (type.choices_count == 2) {
+              if (i == 1) choice.label = 'True'
+              if (i == 2) choice.label = 'False'
+            }
+            this.form.data.choices.push(choice)
           }
         }
       }
