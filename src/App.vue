@@ -28,3 +28,14 @@ export default {
   }),
 }
 </script>
+
+<style>
+  fieldset {
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+  }
+  legend {
+    padding: 0 .25em;
+  }
+</style>

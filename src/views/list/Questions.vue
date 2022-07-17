@@ -5,106 +5,127 @@
       Game #{{ game.id }} {{ game.title }} - {{ game.date | formatDate }}
     </div>
 
-    <v-card>
-      <v-card-title>
-        Questions
-      </v-card-title>
-      <v-data-table :headers="headers" :items="questions" :loading="loadingItems">
-        <template v-slot:item.level_id="{ item }">
-          {{ getLevelByID(item.level_id) }}
-        </template>
-        <template v-slot:item.type_id="{ item }">
-          {{ getQuestTypeByID(item.type_id) }}
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-btn text small color="primary"
-            @click="editQuestion(item)">
-            <v-icon left>mdi-pencil</v-icon>
-            Edit
-          </v-btn>
-        </template>
-      </v-data-table>
-      <v-card-text>
-        Total score to gain:
-        <strong>{{ totalScore }}</strong>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn plain color="primary" @click="newQuestion">New Question</v-btn>
-      </v-card-actions>
-    </v-card>
+    <v-row>
+      <v-col>
 
-    <!-- Question details dialog -->
-    <v-dialog v-model="form.show" persistent max-width="640">
-      <v-card>
-        <v-card-title>
-          Question
-        </v-card-title>
-        <v-card-text>
-          <v-form v-model="form.valid" @submit.prevent="saveQuestion">
+        <v-card>
+          <v-card-title>
+            Questions
+          </v-card-title>
+          <v-data-table :headers="headers" :items="questions" :loading="loadingItems">
+            <template v-slot:item.level_id="{ item }">
+              {{ getLevelByID(item.level_id) }}
+            </template>
+            <template v-slot:item.type_id="{ item }">
+              {{ getQuestTypeByID(item.type_id) }}
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-btn text small color="primary"
+                @click="editQuestion(item)">
+                <v-icon left>mdi-pencil</v-icon>
+                Edit
+              </v-btn>
+            </template>
+          </v-data-table>
+          <v-card-text>
+            Total score to gain:
+            <strong>{{ totalScore }}</strong>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn plain color="primary" @click="newQuestion">New Question</v-btn>
+          </v-card-actions>
+        </v-card>
 
-            <v-text-field label="Order #"
-              v-model="form.data.order"
-              type="number"
-              outlined required readonly>
-            </v-text-field>
-            <v-select label="Level"
-              :items="levels" item-text="name" item-value="id"
-              v-model="form.data.level_id"
-              @change="changeLevel"
-              outlined required>
-            </v-select>
-            <v-select label="Question Type"
-              :items="quest_types" item-text="name" item-value="id"
-              v-model="form.data.type_id"
-              @change="changeQuestType"
-              outlined required>
-            </v-select>
-            <v-text-field label="Score"
-              v-model="form.data.score"
-              type="number"
-              outlined required>
-            </v-text-field>
-            <v-textarea label="Question"
-              v-model="form.data.question"
-              outlined required auto-grow counter maxlength="65535">
-            </v-textarea>
-            <v-text-field label="Reference"
-              v-model="form.data.reference"
-              outlined required counter maxlength="255">
-            </v-text-field>
+      </v-col>
+      <v-col v-if="form.show">
 
-            <label>Choices / Answer</label>
-            <v-radio-group mandatory name="answer" v-model="form.model.answer">
-              <v-row v-for="choice of form.data.choices" :key="choice.num" class="mx-0" align="center">
+        <v-card>
+          <v-card-title>
+            Question
+            <v-spacer></v-spacer>
+            <span v-if="form.data.id > 0" class="text-caption">
+              {{`[Database ID: ${form.data.id} ]`}}
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <v-form v-model="form.valid" @submit.prevent="saveQuestion">
+
+              <v-row>
                 <v-col cols="2">
-                  <v-radio name="answer" :value="choice.row" hide-details></v-radio>
-                </v-col>
-                <v-col cols="3">
-                  <v-text-field readonly v-model="choice.label"></v-text-field>
+                  <v-text-field label="Question #"
+                    v-model="form.data.order"
+                    type="number"
+                    outlined required readonly hide-details>
+                  </v-text-field>
                 </v-col>
                 <v-col>
-                  <v-text-field v-model="choice.value"></v-text-field>
+                  <v-select label="Level"
+                    :items="levels" item-text="name" item-value="id"
+                    v-model="form.data.level_id"
+                    @change="changeLevel"
+                    outlined required hide-details>
+                  </v-select>
+                </v-col>
+                <v-col cols="2">
+                  <v-text-field label="Score"
+                    v-model="form.data.score"
+                    type="number"
+                    outlined required hide-details>
+                  </v-text-field>
+                </v-col>
+                <v-col>
+                  <v-select label="Question Type"
+                    :items="quest_types" item-text="name" item-value="id"
+                    v-model="form.data.type_id"
+                    @change="changeQuestType"
+                    outlined required hide-details>
+                  </v-select>
+                </v-col>
+                <v-col cols="8">
+                  <v-textarea label="Question"
+                    v-model="form.data.question"
+                    outlined required auto-grow counter maxlength="65535">
+                  </v-textarea>
+                </v-col>
+                <v-col cols="4">
+                  <v-textarea label="Reference"
+                    v-model="form.data.reference"
+                    outlined required auto-grow counter maxlength="255">
+                  </v-textarea>
                 </v-col>
               </v-row>
-            </v-radio-group>
 
-            <v-alert v-if="form.message != ''" dense>
-              {{ form.message }}
-            </v-alert>
+              <fieldset class="px-2">
+                <legend>Choices / Answer</legend>
+                <v-radio-group v-model="form.model.answer" class="mt-0">
+                  <v-text-field v-for="choice of form.data.choices" :key="choice.num" v-model="choice.value"
+                    type="text" hide-details>
+                    <template v-slot:prepend class="d-flex">
+                      <v-radio :label="choice.label" :value="choice.label"></v-radio>
+                    </template>
+                  </v-text-field>
+                </v-radio-group>
+              </fieldset>
 
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" :disabled="!form.valid" @click="saveQuestion">
-            Save
-          </v-btn>
-          <v-btn @click="form.show = false">
-            Cancel
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+              <v-alert v-if="form.message != ''" dense>
+                {{ form.message }}
+              </v-alert>
+
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" :disabled="!form.valid" @click="saveQuestion">
+              Save
+            </v-btn>
+            <v-btn @click="form.show = false">
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+
+      </v-col>
+    </v-row>
   </div>
 </template>
 
