@@ -7,8 +7,8 @@
       </v-card-title>
       <v-data-table :headers="headers" :items="players"
         :loading="loadingItems"
-        items-per-page="-1"
-        hide-default-footer="false">
+        :items-per-page="-1"
+        :hide-default-footer="false">
         <template v-slot:item.joined_at="{ item }">
           {{ item.joined_at | formatDate }}
         </template>

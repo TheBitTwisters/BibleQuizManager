@@ -5,7 +5,7 @@ const getAll = () => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url: '/players/all',
+      url: '/players',
       headers: {
         'Authorization': store.getters.getSessionToken()
       }
