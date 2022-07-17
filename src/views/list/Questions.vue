@@ -52,7 +52,7 @@
 
               <v-row>
                 <v-col cols="2">
-                  <v-text-field label="Question #"
+                  <v-text-field label="Q#"
                     v-model="form.data.order"
                     type="number"
                     outlined required readonly hide-details>
@@ -119,7 +119,7 @@
               Save
             </v-btn>
             <v-btn @click="form.show = false">
-              Cancel
+              Close
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -149,7 +149,7 @@ export default {
     headers: [
       {
         text: '#',
-        value: 'row_number'
+        value: 'order'
       },
       {
         text: 'Question',
@@ -176,6 +176,7 @@ export default {
     levels: [],
     quest_types: [],
     questions: [],
+    question: null,
     form: {
       data: {
         id: 0,
@@ -268,8 +269,12 @@ export default {
         this.form.data.type_id = lastQuestion.type_id
         this.changeLevel(lastQuestion.level_id)
         this.changeQuestType(lastQuestion.type_id)
+      } else {
+        this.form.data.order = 1
       }
       this.form.show = true
+      this.question = null
+      this.form.model.answer = ''
     },
     editQuestion: function (question) {
       this.form.submitting = false
@@ -284,6 +289,12 @@ export default {
       this.form.data.score = question.score,
       this.form.data.choices = question.choices
       this.form.show = true
+      for (let choice of question.choices) {
+        if (choice.is_answer == 1) {
+          this.form.model.answer = choice.label
+        }
+      }
+      this.question = question
     },
     saveQuestion: async function () {
       this.form.submitting = true
@@ -292,15 +303,13 @@ export default {
         if (this.form.data.id > 0) {
           response = await apiQuestions.update({
             question_id: this.form.data.id,
-            question: {
-              level_id: this.form.data.level_id,
-              type_id: this.form.data.type_id,
-              order: this.form.data.order,
-              question: this.form.data.question,
-              reference: this.form.data.reference,
-              layout: this.form.data.layout,
-              score: this.form.data.score
-            }
+            level_id: this.form.data.level_id,
+            type_id: this.form.data.type_id,
+            order: this.form.data.order,
+            question: this.form.data.question,
+            reference: this.form.data.reference,
+            layout: this.form.data.layout,
+            score: this.form.data.score
           })
         } else {
           response = await apiQuestions.create(this.form.data)
@@ -309,15 +318,20 @@ export default {
           status: 'success',
           message: response.message
         })
+        if (this.question != null && this.question.type_id != this.form.data.type_id) {
+          for (let choice of this.question.choices) {
+            await this.deleteChoice(choice.id)
+          }
+        }
+        this.form.data.id = response.question.id
+        await this.saveChoices()
         if (!response.err) {
-          await this.saveChoices()
-          this.form.show = false
           this.getData()
         }
       } catch(err) {
         console.log(err)
         if (this.form.data.id > 0) {
-          await this.saveChoices();
+          this.saveChoices();
         }
         store.commit('SHOW_SNACKBAR', {
           status: 'error',
@@ -333,20 +347,21 @@ export default {
           var response = {}
           if (choice.id > 0) {
             response = await apiChoices.update({
-              choice_id: this.form.data.id,
-              choice: {
-                label: choice.label,
-                value: choice.value,
-                is_answer: this.form.model.answer == choice.row ? 1 : 0
-              }
+              choice_id: choice.id,
+              label: choice.label,
+              value: choice.value,
+              is_answer: this.form.model.answer == choice.label ? 1 : 0
             })
           } else {
+            choice.question_id = this.form.data.id
+            choice.is_answer = this.form.model.answer == choice.label ? 1 : 0
             response = await apiChoices.create(choice)
           }
           store.commit('SHOW_SNACKBAR', {
             status: 'success',
             message: response.message
           })
+          choice.id = response.choice.id
         } catch(err) {
           console.log(err)
           store.commit('SHOW_SNACKBAR', {
@@ -354,6 +369,20 @@ export default {
             message: err.message
           })
         }
+      }
+    },
+    deleteChoice: async function (choice_id) {
+      var response = await apiChoices.deleteChoice({ choice_id: choice_id })
+      if (!response.err) {
+        store.commit('SHOW_SNACKBAR', {
+          status: 'success',
+          message: response.message
+        })
+      } else {
+        store.commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: response.message
+        })
       }
     },
     changeLevel: function (level_id) {
@@ -369,10 +398,13 @@ export default {
           this.form.data.choices = []
           for (let i = 1; i <= type.choices_count; i++) {
             var choice = {
-              row: i,
+              id: 0,
               label: '',
               value: '',
               is_answer: 0
+            }
+            if (this.form.data.id > 0) {
+              choice.question_id = this.form.data.id
             }
             if (type.choices_count == 4) {
               if (i == 1) choice.label = 'A'

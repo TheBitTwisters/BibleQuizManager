@@ -45,7 +45,27 @@ const update = (params) => {
   })
 }
 
+const deleteChoice = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'delete',
+      url: `/choices/${params.choice_id}`,
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
 export default {
   create,
-  update
+  update,
+  deleteChoice
 }
