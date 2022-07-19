@@ -42,11 +42,33 @@ const getAttendance = (params) => {
   })
 }
 
-const savePlayer = (params) => {
+const create = (params) => {
   return new Promise((resolve, reject) => {
     axios({
-      method: params.id ? 'put' : 'post',
-      url: `/players/${params.id ? params.id : 'save'}`,
+      method: 'post',
+      url: '/players/',
+      data: {
+        player: params
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
+const update = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'put',
+      url: `/players/${params.player_id}`,
       data: {
         player: params
       },
@@ -67,5 +89,6 @@ const savePlayer = (params) => {
 export default {
   getAll,
   getAttendance,
-  savePlayer
+  create,
+  update
 }

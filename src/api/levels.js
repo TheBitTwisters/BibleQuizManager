@@ -20,11 +20,33 @@ const getAll = () => {
   })
 }
 
-const saveLevel = (params) => {
+const create = (params) => {
   return new Promise((resolve, reject) => {
     axios({
-      method: params.id ? 'put' : 'post',
-      url: `/levels/${params.id ? params.id : 'save'}`,
+      method: 'post',
+      url: '/levels',
+      data: {
+        level: params
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
+const update = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'put',
+      url: `/levels/${params.level_id}`,
       data: {
         level: params
       },
@@ -44,5 +66,6 @@ const saveLevel = (params) => {
 
 export default {
   getAll,
-  saveLevel
+  create,
+  update
 }

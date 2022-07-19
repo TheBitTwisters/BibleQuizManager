@@ -9,6 +9,9 @@
         :loading="loadingItems"
         :items-per-page="-1"
         :hide-default-footer="false">
+        <template v-slot:item.fullname="{ item }">
+          {{ item.first_name + ' ' + item.last_name }}
+        </template>
         <template v-slot:item.joined_at="{ item }">
           {{ item.joined_at | formatDate }}
         </template>
@@ -38,14 +41,14 @@
               v-model="form.data.name"
               outlined required counter maxlength="64">
             </v-text-field>
-            <v-text-field label="Full Name"
-              v-model="form.data.fullname"
-              outlined required counter maxlength="255">
+            <v-text-field label="Last name"
+              v-model="form.data.last_name"
+              outlined required counter maxlength="32">
             </v-text-field>
-
-            <v-alert v-if="form.message != ''" dense>
-              {{ form.message }}
-            </v-alert>
+            <v-text-field label="First name"
+              v-model="form.data.first_name"
+              outlined required counter maxlength="32">
+            </v-text-field>
 
           </v-form>
         </v-card-text>
@@ -64,7 +67,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import store from '@/store'
 import apiPlayers from '@/api/players'
 
 export default {
@@ -92,14 +95,14 @@ export default {
     players: [],
     form: {
       data: {
-        active: 0,
+        id: 0,
         name: '',
-        fullname: ''
+        last_name: '',
+        first_name: ''
       },
       show: false,
       valid: false,
       submitting: false,
-      message: '',
       success: false
     },
   }),
@@ -120,40 +123,58 @@ export default {
     },
     newPlayer: function () {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
       this.form.data = {
-        active: 0,
-        title: '',
-        date: ''
+        id: 0,
+        name: '',
+        last_name: '',
+        first_name: ''
       }
       this.form.show = true
     },
     editPlayer: function (player) {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
-      this.form.data = player
-      this.form.data.date = moment(player.date).format('YYYY-MM-DD')
+      this.form.data = {
+        id: player.id,
+        name: player.name,
+        last_name: player.last_name,
+        first_name: player.first_name
+      }
       this.form.show = true
     },
-    savePlayer: function () {
+    savePlayer: async function () {
       this.form.submitting = true
-      this.form.message = ''
-      apiPlayers.savePlayer(this.form.data)
-        .then(data => {
-          if (!data.err) {
-            this.form.show = false
-            this.getPlayers()
-          }
+      try {
+        var response = {}
+        if (this.form.data.id > 0) {
+          response = await apiPlayers.update({
+            player_id: this.form.data.id,
+            name: this.form.data.name,
+            last_name: this.form.data.last_name,
+            first_name: this.form.data.first_name
+          })
+        } else {
+          response = await apiPlayers.create(this.form.data)
+        }
+        store.commit('SHOW_SNACKBAR', {
+          status: 'success',
+          message: response.message
         })
-        .catch(err => {
-          console.log(err)
-          this.form.message = err.message
+        this.form.data.id = response.player.id
+        if (!response.err) {
+          this.form.show = false
+          this.getPlayers()
+        }
+      } catch(err) {
+        console.log(err)
+        store.commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: err.message
         })
-        .finally(() => {
-          this.form.submitting = false
-        })
+      } finally {
+        this.form.submitting = false
+      }
     }
   }
 }

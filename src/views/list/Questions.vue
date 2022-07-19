@@ -1,18 +1,23 @@
 <template>
   <div id="biblequiz-questions">
 
-    <div class="title my-5">
-      Game #{{ game.id }} {{ game.title }} - {{ game.date | formatDate }}
-    </div>
+    <v-banner single-line class="mb-5">
+      Game [ID:{{ game.id }}] "{{ game.title }}" - {{ game.date | formatDate }}
+    </v-banner>
 
     <v-row>
-      <v-col>
+      <v-col cols="12" :lg="form.show ? 6 : 12">
 
         <v-card>
           <v-card-title>
             Questions
+            <v-spacer></v-spacer>
+            <v-btn plain color="primary" @click="newQuestion">New Question</v-btn>
           </v-card-title>
-          <v-data-table :headers="headers" :items="questions" :loading="loadingItems">
+          <v-data-table :headers="headers" :items="questions"
+            :loading="loadingItems"
+            :items-per-page="-1"
+            :hide-default-footer="true">
             <template v-slot:item.level_id="{ item }">
               {{ getLevelByID(item.level_id) }}
             </template>
@@ -31,17 +36,15 @@
             Total score to gain:
             <strong>{{ totalScore }}</strong>
           </v-card-text>
-          <v-card-actions>
-            <v-btn plain color="primary" @click="newQuestion">New Question</v-btn>
-          </v-card-actions>
         </v-card>
 
       </v-col>
-      <v-col v-if="form.show">
+      <v-col cols="12" lg="6" v-if="form.show">
 
         <v-card>
           <v-card-title>
-            Question
+            <span v-if="form.data.id > 0">Edit Question</span>
+            <span v-else>New Question</span>
             <v-spacer></v-spacer>
             <span v-if="form.data.id > 0" class="text-caption">
               {{`[Database ID: ${form.data.id} ]`}}

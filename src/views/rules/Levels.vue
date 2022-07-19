@@ -38,10 +38,6 @@
               outlined required>
             </v-text-field>
 
-            <v-alert v-if="form.message != ''" dense>
-              {{ form.message }}
-            </v-alert>
-
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -59,10 +55,11 @@
 </template>
 
 <script>
+import store from '@/store'
 import apiLevels from '@/api/levels'
 
 export default {
-  name: 'view-levels-list',
+  name: 'view-rules-levels',
   data: () => ({
     loadingItems: false,
     headers: [
@@ -82,13 +79,13 @@ export default {
     levels: [],
     form: {
       data: {
-        title: '',
-        date: ''
+        id: 0,
+        name: '',
+        score: 1
       },
       show: false,
       valid: false,
       submitting: false,
-      message: '',
       success: false
     },
   }),
@@ -109,39 +106,55 @@ export default {
     },
     newLevel: function () {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
       this.form.data = {
-        active: 0,
-        title: '',
-        date: ''
+        id: 0,
+        name: '',
+        score: 1
       }
       this.form.show = true
     },
     editLevel: function (level) {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
-      this.form.data = level
+      this.form.data = {
+        id: level.id,
+        name: level.name,
+        score: level.score
+      }
       this.form.show = true
     },
-    saveLevel: function () {
+    saveLevel: async function () {
       this.form.submitting = true
-      this.form.message = ''
-      apiLevels.saveLevel(this.form.data)
-        .then(data => {
-          if (!data.err) {
-            this.form.show = false
-            this.getLevels()
-          }
+      try {
+        var response = {}
+        if (this.form.data.id > 0) {
+          response = await apiLevels.update({
+            level_id: this.form.data.id,
+            name: this.form.data.name,
+            score: this.form.data.score
+          })
+        } else {
+          response = await apiLevels.create(this.form.data)
+        }
+        store.commit('SHOW_SNACKBAR', {
+          status: 'success',
+          message: response.message
         })
-        .catch(err => {
-          console.log(err)
-          this.form.message = err.message
+        this.form.data.id = response.level.id
+        if (!response.err) {
+          this.form.show = false
+          this.getLevels()
+        }
+      } catch(err) {
+        console.log(err)
+        store.commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: err.message
         })
-        .finally(() => {
-          this.form.submitting = false
-        })
+      } finally {
+        this.form.submitting = false
+      }
     }
   }
 }

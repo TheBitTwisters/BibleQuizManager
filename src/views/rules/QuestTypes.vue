@@ -38,10 +38,6 @@
               outlined required>
             </v-text-field>
 
-            <v-alert v-if="form.message != ''" dense>
-              {{ form.message }}
-            </v-alert>
-
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -59,6 +55,7 @@
 </template>
 
 <script>
+import store from '@/store'
 import apiQuestTypes from '@/api/quest_types'
 
 export default {
@@ -82,13 +79,13 @@ export default {
     quest_types: [],
     form: {
       data: {
+        id: 0,
         name: '',
         choices_count: ''
       },
       show: false,
       valid: false,
       submitting: false,
-      message: '',
       success: false
     },
   }),
@@ -109,9 +106,9 @@ export default {
     },
     newQuestType: function () {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
       this.form.data = {
+        id: 0,
         name: '',
         choices_count: 1
       }
@@ -119,28 +116,45 @@ export default {
     },
     editQuestType: function (quest_type) {
       this.form.submitting = false
-      this.form.message = ''
       this.form.success = false
-      this.form.data = quest_type
+      this.form.data = {
+        id: quest_type.id,
+        name: quest_type.name,
+        choices_count: quest_type.choices_count
+      }
       this.form.show = true
     },
     saveQuestType: function () {
       this.form.submitting = true
-      this.form.message = ''
-      apiQuestTypes.saveQuestType(this.form.data)
-        .then(data => {
-          if (!data.err) {
-            this.form.show = false
-            this.getQuestTypes()
-          }
+      try {
+        var response = {}
+        if (this.form.data.id > 0) {
+          response = await apiQuestTypes.update({
+            type_id: this.form.data.id,
+            name: this.form.data.name,
+            score: this.form.data.score
+          })
+        } else {
+          response = await apiQuestTypes.create(this.form.data)
+        }
+        store.commit('SHOW_SNACKBAR', {
+          status: 'success',
+          message: response.message
         })
-        .catch(err => {
-          console.log(err)
-          this.form.message = err.message
+        this.form.data.id = response.level.id
+        if (!response.err) {
+          this.form.show = false
+          this.getQuestTypes()
+        }
+      } catch(err) {
+        console.log(err)
+        store.commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: err.message
         })
-        .finally(() => {
-          this.form.submitting = false
-        })
+      } finally {
+        this.form.submitting = false
+      }
     }
   }
 }
