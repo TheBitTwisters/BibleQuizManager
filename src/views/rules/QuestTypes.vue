@@ -124,7 +124,7 @@ export default {
       }
       this.form.show = true
     },
-    saveQuestType: function () {
+    saveQuestType: async function () {
       this.form.submitting = true
       try {
         var response = {}
