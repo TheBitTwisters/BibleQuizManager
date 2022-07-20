@@ -2,7 +2,8 @@
   <div id="biblequiz-questions">
 
     <v-banner single-line class="mb-5">
-      Game [ID:{{ game.id }}] "{{ game.title }}" - {{ game.date | formatDate }}
+      <span class="text-caption">[Game ID: {{ game.id }}]</span>
+      <span>"{{ game.title }}" - {{ game.date | formatDate }}</span>
     </v-banner>
 
     <v-row>
@@ -41,7 +42,7 @@
       </v-col>
       <v-col cols="12" lg="6" v-if="form.show">
 
-        <v-card>
+        <v-card id="biblequiz-card-question">
           <v-card-title>
             <span v-if="form.data.id > 0">Edit Question</span>
             <span v-else>New Question</span>
@@ -54,14 +55,14 @@
             <v-form v-model="form.valid" @submit.prevent="saveQuestion">
 
               <v-row>
-                <v-col cols="2">
+                <v-col cols="6" sm="2">
                   <v-text-field label="Q#"
                     v-model="form.data.order"
                     type="number"
                     outlined required readonly hide-details>
                   </v-text-field>
                 </v-col>
-                <v-col>
+                <v-col cols="6" sm="3">
                   <v-select label="Level"
                     :items="levels" item-text="name" item-value="id"
                     v-model="form.data.level_id"
@@ -69,14 +70,14 @@
                     outlined required hide-details>
                   </v-select>
                 </v-col>
-                <v-col cols="2">
+                <v-col cols="6" sm="2">
                   <v-text-field label="Score"
                     v-model="form.data.score"
                     type="number"
                     outlined required hide-details>
                   </v-text-field>
                 </v-col>
-                <v-col>
+                <v-col cols="6" sm="5">
                   <v-select label="Question Type"
                     :items="quest_types" item-text="name" item-value="id"
                     v-model="form.data.type_id"
@@ -84,21 +85,21 @@
                     outlined required hide-details>
                   </v-select>
                 </v-col>
-                <v-col cols="8">
+                <v-col cols="12" sm="8">
                   <v-textarea label="Question"
                     v-model="form.data.question"
-                    outlined required auto-grow counter maxlength="65535">
+                    outlined required auto-grow counter hide-details maxlength="65535">
                   </v-textarea>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="12" sm="4">
                   <v-textarea label="Reference"
                     v-model="form.data.reference"
-                    outlined required auto-grow counter maxlength="255">
+                    outlined required auto-grow counter hide-details maxlength="255">
                   </v-textarea>
                 </v-col>
               </v-row>
 
-              <fieldset class="px-2">
+              <fieldset class="px-2 mt-4">
                 <legend>Choices / Answer</legend>
                 <v-radio-group v-model="form.model.answer" class="mt-0">
                   <v-text-field v-for="choice of form.data.choices" :key="choice.num" v-model="choice.value"
@@ -278,6 +279,9 @@ export default {
       this.form.show = true
       this.question = null
       this.form.model.answer = ''
+      this.$nextTick(() => {
+        this.$vuetify.goTo('#biblequiz-card-question')
+      })
     },
     editQuestion: function (question) {
       this.form.submitting = false
@@ -298,6 +302,9 @@ export default {
         }
       }
       this.question = question
+      this.$nextTick(() => {
+        this.$vuetify.goTo('#biblequiz-card-question')
+      })
     },
     saveQuestion: async function () {
       this.form.submitting = true
