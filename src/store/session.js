@@ -27,17 +27,19 @@ const session = {
     }
   },
   actions: {
-    'session-login': function ({ commit }, params) {
+    'session-login': function ({ commit, dispatch }, params) {
       commit('SET_SESSION', params.session)
       commit('SET_SESSION_MANAGER', params.manager)
       commit('SET_GAMES', params.games)
       commit('SET_APP_DRAWER', true)
+      dispatch('clear-game')
       router.push({ name: 'Dashboard' })
     },
-    'session-logout': function ({ commit }) {
+    'session-logout': function ({ commit, dispatch }) {
       commit('SET_SESSION', {})
       commit('SET_SESSION_MANAGER', {})
       commit('SET_APP_DRAWER', false)
+      dispatch('clear-game')
       if (router.currentRoute.name != 'Login') {
         router.push({ name: 'Login' })
       }
@@ -46,6 +48,13 @@ const session = {
   getters: {
     isSessionActive: (state) => () => {
       return state.expiresIn > 0 && state.token.length > 0
+    },
+    isSessionExpired: (state) => () => {
+      if (state.expiresIn > 0) {
+        var expiration = moment(state.startedAt).add(state.expiresIn, 'seconds')
+        return moment().isSameOrAfter(expiration)
+      }
+      return false
     },
     getSessionToken: (state) => () => {
       return state.token
