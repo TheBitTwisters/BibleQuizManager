@@ -13,6 +13,11 @@ const play = {
   },
   mutations: {},
   actions: {
+    'clear-game': function ({ state }) {
+      state.game = null
+      state.questions = []
+      state.players = []
+    },
     'play-game': async function ({ state, commit }, params) {
       try {
         var response = {}
