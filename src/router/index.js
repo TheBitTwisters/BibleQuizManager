@@ -14,6 +14,8 @@ import ViewDashboard from '@/views/Dashboard'
 import ViewPlay from '@/views/play/View'
 import ViewMonitor from '@/views/monitor/View'
 
+import store from '@/store'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -64,6 +66,20 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (store.getters.isSessionActive() && !store.getters.isSessionExpired()) {
+    if (to.name === 'Login') {
+      next({ name: 'Dashboard' })
+    }
+  } else {
+    if (to.name !== 'Login' && to.name !== 'Register') {
+      store.dispatch('session-logout')
+      next({ name: 'Login' })
+    }
+  }
+  next()
 })
 
 export default router
