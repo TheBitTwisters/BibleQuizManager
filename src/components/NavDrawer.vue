@@ -54,6 +54,21 @@
               </v-list-item-action>
             </template>
           </v-list-item>
+          <v-list-item @click="toggleMonitorQuestion">
+            <template v-slot:default>
+              <v-list-item-content class="pl-2">
+                <v-list-item-title>Question</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-icon v-if="monitorQuestion">
+                  mdi-checkbox-marked
+                </v-icon>
+                <v-icon v-else>
+                  mdi-checkbox-blank-outline
+                </v-icon>
+              </v-list-item-action>
+            </template>
+          </v-list-item>
         </v-list>
       </v-list-group>
     </v-list>
