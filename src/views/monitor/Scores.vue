@@ -50,21 +50,22 @@ export default {
   },
   methods: {
     getScores: async function () {
-      var self = this
       try {
         var response = { scores: [] }
-        if (self.monitorGame && self.game.id > 0) {
-          response = await apiGames.getScores({ game_id: self.game.id })
+        if (this.monitorGame && this.game.id > 0) {
+          response = await apiGames.getScores({ game_id: this.game.id })
         } else {
           response = await apiGames.getAllGamesScores()
         }
-        self.scores = response.scores
+        this.scores = response.scores
       } catch (err) {
         console.error(err)
+      } finally {
+        var self = this
+        setTimeout(function () {
+          self.getScores()
+        }, 2500)
       }
-      this.$nextTick(() => {
-        self.getScores()
-      });
     },
     getPlayerByID: function (player_id) {
       for (let player of store.state.play.players) {
