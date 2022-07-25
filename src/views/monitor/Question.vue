@@ -12,7 +12,7 @@
     <div class="teal d-flex align-center justify-center pa-3" :style="{ fontSize: '9vh', height: questionHeight }">
       {{ question.question }}
     </div>
-    <div class="white black--text pa-1 d-flex align-center justify-center" style="height: 5%; font-size: 3vh">
+    <div class="black--text pa-1 d-flex align-center justify-center" style="height: 5%; font-size: 3vh">
       Reference: {{question.reference}}
     </div>
 
