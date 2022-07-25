@@ -44,6 +44,11 @@ const session = {
         router.push({ name: 'Login' })
       }
     },
+    'session-check': function ({ getters, dispatch }) {
+      if (getters.isSessionExpired()) {
+        dispatch('session-logout')
+      }
+    }
   },
   getters: {
     isSessionActive: (state) => () => {

@@ -4,7 +4,7 @@
     <NavDrawer/>
     <Snackbar/>
     <v-main class="grey lighten-2">
-      <v-container fluid style="height: 100%;">
+      <v-container fluid class="fill-height">
         <router-view/>
       </v-container>
     </v-main>
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import store from '@/store'
 import Appbar from '@/components/Appbar'
 import NavDrawer from '@/components/NavDrawer'
 import Snackbar from '@/components/Snackbar'
@@ -26,10 +27,16 @@ export default {
   data: () => ({
     //
   }),
+  mounted () {
+    store.dispatch('session-check')
+  }
 }
 </script>
 
 <style>
+  html {
+    overflow-y: auto;
+  }
   fieldset {
     border-radius: 4px;
     border-width: 1px;

@@ -58,6 +58,25 @@ const getQuestions = (params) => {
   })
 }
 
+const getScores = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'get',
+      url: `/games/${params.game_id}/scores`,
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
 const setCurrentQuestion = (params) => {
   return new Promise((resolve, reject) => {
     axios({
@@ -128,6 +147,7 @@ export default {
   getAll,
   getDetails,
   getQuestions,
+  getScores,
   setCurrentQuestion,
   create,
   update

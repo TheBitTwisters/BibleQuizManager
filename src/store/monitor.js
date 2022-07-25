@@ -26,6 +26,9 @@ const monitor = {
   actions: {
     'monitor-scores': ({ commit }, on) => {
       commit('SET_MONITOR_SCORES', on)
+      if (on) {
+        commit('SET_MONITOR_QUESTION', false)
+      }
     },
     'monitor-game': ({ commit, getters }, on) => {
       if (on) {
@@ -41,6 +44,7 @@ const monitor = {
     },
     'monitor-question': ({ commit, getters }, on) => {
       if (on && getters.hasPlayGame() && getters.hasPlayCurrentQuestion()) {
+        commit('SET_MONITOR_SCORES', false)
         commit('SET_MONITOR_GAME', true)
         commit('SET_MONITOR_QUESTION', true)
       } else {

@@ -40,7 +40,7 @@ const play = {
     },
     'play-question': function ({ state }, params) {
       if (state.questions.length > 0) {
-        apiGames.setGameQuestion({
+        apiGames.setCurrentQuestion({
           game_id: state.game.id,
           question_id: params.question_id
         }).then(response => {
@@ -82,7 +82,7 @@ const play = {
       return []
     },
     hasPlayGame: (state) => () => {
-      return state.game.id > 0
+      return state.game && state.game.id > 0
     },
     hasPlayCurrentQuestion: (state) => () => {
       return state.game.current_question_id > 0

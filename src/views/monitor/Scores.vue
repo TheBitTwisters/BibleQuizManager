@@ -24,7 +24,7 @@
 
 <script>
 import store from '@/store'
-import apiScores from '@/api/scores'
+import apiGames from '@/api/games'
 
 export default {
   name: 'view-monitor-scores',
@@ -34,7 +34,7 @@ export default {
     topTenScores: function () {
       var scores = []
       for (let score of this.scores) {
-        if (scores.length >= 10) {
+        if (scores.length == 10) {
           break
         }
         scores.push(score)
@@ -50,14 +50,21 @@ export default {
   },
   methods: {
     getScores: async function () {
-      var response = { scores: [] }
-      if (this.monitorGame && this.game.id > 0) {
-        response = await apiScores.getGameScores({ game_id: this.game.id })
-      } else {
-        response = await apiScores.getAllGamesScores()
+      var self = this
+      try {
+        var response = { scores: [] }
+        if (self.monitorGame && self.game.id > 0) {
+          response = await apiGames.getScores({ game_id: self.game.id })
+        } else {
+          response = await apiGames.getAllGamesScores()
+        }
+        self.scores = response.scores
+      } catch (err) {
+        console.error(err)
       }
-      apiScores.getGameScores({ game_id: this.game.id })
-      this.scores = response.scores
+      this.$nextTick(() => {
+        self.getScores()
+      });
     },
     getPlayerByID: function (player_id) {
       for (let player of store.state.play.players) {

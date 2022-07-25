@@ -1,10 +1,6 @@
 <template>
   <div id="biblequiz-play">
 
-    <div class="title my-5">
-      Playing Game #{{ game.id }} "{{ game.title }}" - {{ game.date | formatDate }}
-    </div>
-
     <v-row>
       <v-col md="3" lg="2">
         <Controls/>
@@ -16,11 +12,12 @@
         <Scores/>
       </v-col>
     </v-row>
+
   </div>
 </template>
 
 <script>
-import store from '@/store'
+import { mapGetters } from 'vuex'
 import Controls from './Controls'
 import Questions from './Questions'
 import Scores from './Scores'
@@ -33,10 +30,19 @@ export default {
     Scores
   },
   computed: {
-    game: () => store.state.play.game
+    game: () => this.$store.state.play.game,
+    ...mapGetters([
+      'hasPlayGame'
+    ])
   },
   mounted () {
-    store.commit('SET_APP_DRAWER', false)
+    if (!this.hasPlayGame()) {
+      this.$router.push('/games')
+      this.$store.commit('SHOW_SNACKBAR', {
+        status: 'warning',
+        message: 'Select a game to play'
+      })
+    }
   },
   methods: {
   }

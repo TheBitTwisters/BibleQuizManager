@@ -5,7 +5,7 @@
       <v-window v-model="questionStep">
         <v-window-item v-for="(quest, index) of questions" :key="quest.id" :value="index + 1">
           <v-card-title class="flex-column">
-            <div>Question ID:{{quest.id}} #{{quest.row_number}} - {{ quest.score }} pts</div>
+            <div>Question #{{quest.order}} - {{ quest.score }} pts</div>
             <div>{{ getLevelByID(quest.level_id).name }} | {{ getQuestTypeByID(quest.type_id).name }}</div>
           </v-card-title>
           <v-card-text>
@@ -17,7 +17,12 @@
           <v-list>
             <template v-for="choice in quest.choices">
               <v-list-item :key="choice.id">
-                {{ choice.value }}
+                <v-list-item-icon>
+                  {{ choice.label }}
+                </v-list-item-icon>
+                <v-list-item-content>
+                  {{ choice.value }}
+                </v-list-item-content>
               </v-list-item>
               <v-divider :key="choice.id"></v-divider>
             </template>
@@ -28,7 +33,7 @@
         <v-btn
           :disabled="questionStep === 1" text
           @click="questionStep--">
-          Back
+          Prev
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn @click="setQuestion()">
@@ -80,9 +85,7 @@ export default {
       var ctr = 1
       for (var question of this.questions) {
         if (ctr == this.questionStep) {
-          store.dispatch('play-question', {
-            question_id: question.id
-          })
+          store.dispatch('play-question', { question_id: question.id })
           break
         }
         ctr++
