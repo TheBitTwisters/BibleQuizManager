@@ -9,7 +9,7 @@
       <span>{{question.score}} PTS</span>
     </div>
 
-    <div class="teal d-flex align-center justify-center pa-3" :style="{ fontSize: '9vh', height: questionHeight }">
+    <div class="teal d-flex align-center justify-center pa-3 text-center" :style="{ fontSize: '9vh', height: questionHeight }">
       {{ question.question }}
     </div>
     <div class="black--text pa-1 d-flex align-center justify-center" style="height: 5%; font-size: 3vh">

@@ -10,9 +10,6 @@
         <template v-slot:item.player_id="{ item }">
           {{ getPlayerByID(item.player_id).fullname }}
         </template>
-        <template v-slot:item.answer="{ item }">
-          {{ getPlayerAnswer(item.player_id) }}
-        </template>
       </v-data-table>
     </v-card>
 
@@ -21,8 +18,7 @@
 
 <script>
 import store from '@/store'
-import apiScores from '@/api/scores'
-import apiAnswers from '@/api/answers'
+import apiGames from '@/api/games'
 
 export default {
   name: 'view-play-scores',
@@ -55,7 +51,7 @@ export default {
   methods: {
     getScores: function () {
       this.loadingScores = true
-      apiScores.getGameScores({ game_id: this.game.id })
+      apiGames.getScores({ game_id: this.game.id })
         .then(response => {
           this.scores = response.scores
         }).catch(err => {
@@ -71,25 +67,6 @@ export default {
         }
       }
       return { name: 'Player' }
-    },
-    checkAnswers: function () {
-      apiAnswers.checkAnswers({ question_id: store.state.play.game.current_question_id })
-        .then(response => {
-          this.answers = response.answers
-          setTimeout(function () {
-            this.checkAnswers()
-          }, 1000)
-        }).catch(err => {
-          console.log(err)
-        })
-    },
-    getPlayerAnswer: function (player_id) {
-      for (let answer of this.answers) {
-        if (answer.player_id == player_id) {
-          return answer.answer
-        }
-      }
-      return ''
     }
   }
 }
