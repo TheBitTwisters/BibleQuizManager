@@ -76,6 +76,10 @@ export default {
     loadingItems: false,
     headers: [
       {
+        text: 'ID',
+        value: 'id'
+      },
+      {
         text: 'Name',
         value: 'name'
       },
