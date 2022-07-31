@@ -3,10 +3,12 @@
 
     <v-card>
       <v-card-title>
-        Scores
+        Players
       </v-card-title>
-      <v-data-table :headers="headers"
-        :items="scores" :loading="loadingScores">
+      <v-data-table :headers="headers" :items="scores"
+        :loading="loadingScores"
+        :items-per-page="-1"
+        :hide-default-footer="true">
         <template v-slot:item.player_id="{ item }">
           {{ getPlayerByID(item.player_id).fullname }}
         </template>
@@ -35,10 +37,6 @@ export default {
       {
         text: 'Score',
         value: 'score',
-      },
-      {
-        text: 'Answer',
-        value: 'answer'
       }
     ],
     scores: [],
@@ -46,7 +44,6 @@ export default {
   }),
   mounted () {
     this.getScores()
-    this.checkAnswers()
   },
   methods: {
     getScores: function () {

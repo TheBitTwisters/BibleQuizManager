@@ -9,7 +9,8 @@ const play = {
     levels: [],
     quest_types: [],
     questions: [],
-    players: []
+    players: [],
+    scores: []
   },
   mutations: {},
   actions: {

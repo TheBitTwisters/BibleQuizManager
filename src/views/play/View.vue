@@ -3,7 +3,7 @@
 
     <v-row>
       <v-col md="3">
-        <Scores/>
+        <Players/>
       </v-col>
       <v-col md="6" lg="7">
         <Questions/>
@@ -15,13 +15,13 @@
 
 <script>
 import Questions from './Questions'
-import Scores from './Scores'
+import Players from './Players'
 
 export default {
   name: 'view-play',
   components: {
     Questions,
-    Scores
+    Players
   },
   mounted () {
     if (!this.$store.getters.hasPlayGame()) {

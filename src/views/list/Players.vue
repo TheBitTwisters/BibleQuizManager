@@ -8,7 +8,7 @@
       <v-data-table :headers="headers" :items="players"
         :loading="loadingItems"
         :items-per-page="-1"
-        :hide-default-footer="false">
+        :hide-default-footer="true">
         <template v-slot:item.fullname="{ item }">
           {{ item.first_name + ' ' + item.last_name }}
         </template>
