@@ -12,15 +12,19 @@ const play = {
     choicesShown: 0,
     players: []
   },
-  mutations: {},
+  mutations: {
+    SET_PLAY_GAME (state, game) {
+      state.game = game
+    },
+    SET_PLAY_CHOICES_SHOWN (state, shown) {
+      state.choicesShown = shown
+    }
+  },
   actions: {
-    'clear-game': function ({ state }) {
-      state.game = undefined
+    'clear-game': function ({ state, commit }) {
+      commit('SET_PLAY_GAME', undefined)
       state.questions = []
-      state.question = {
-        order: 0
-      }
-      state.choices = []
+      state.choicesShown = 0,
       state.players = []
     },
     'play-game': async function ({ state, commit, dispatch }, params) {
@@ -31,7 +35,7 @@ const play = {
         response = await apiQuestTypes.getAll()
         state.quest_types = response.quest_types
         response = await apiGames.getDetails({ game_id: params.game_id })
-        state.game = response.game
+        commit('SET_PLAY_GAME', response.game)
         response = await apiGames.getQuestions({ game_id: params.game_id })
         state.questions = response.questions
         router.push('/play')
@@ -44,23 +48,30 @@ const play = {
         })
       }
     },
-    'play-next-question': function ({ state }) {
+    'play-next-question': async function ({ state, commit }) {
       for (let question of state.questions) {
         if (question.id > state.game.current_question_id) {
-          apiGames.setCurrentQuestion({
-            game_id: state.game.id,
-            question_id: question.id
-          }).then(response => {
-            state.choicesShown = 0
-            state.game = response.game
-          })
+          try {
+            var response = await apiGames.setCurrentQuestion({
+              game_id: state.game.id,
+              question_id: question.id
+            })
+            commit('SET_PLAY_CHOICES_SHOWN', 0)
+            commit('SET_PLAY_GAME', response.game)
+          } catch (err) {
+            console.log(err)
+            commit('SHOW_SNACKBAR', {
+              status: 'error',
+              message: err.message
+            })
+          }
           break
         }
       }
     },
-    'play-choice-show': function ({ state }) {
+    'play-choice-show': function ({ state, commit }) {
       if (state.choicesShown < 4) {
-        state.choicesShown++
+        commit('SET_PLAY_CHOICES_SHOWN', state.choicesShown + 1)
       }
     },
     'play-reveal-answer': function ({ commit }) {
@@ -105,6 +116,9 @@ const play = {
         }
       }
       return []
+    },
+    getPlayChoicesShown: (state) => () => {
+      return state.choicesShown
     },
     hasPlayGame: (state) => () => {
       return state.game && state.game.id > 0

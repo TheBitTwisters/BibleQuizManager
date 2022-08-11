@@ -2,6 +2,7 @@
   <v-row>
     <v-col md="3">
       <Panel/>
+      <Monitor/>
     </v-col>
     <v-col md="6">
       <Questions/>
@@ -14,6 +15,7 @@
 
 <script>
 import Panel from './Panel'
+import Monitor from './Monitor'
 import Questions from './Questions'
 import Players from './Players'
 
@@ -21,6 +23,7 @@ export default {
   name: 'view-play',
   components: {
     Panel,
+    Monitor,
     Questions,
     Players
   },

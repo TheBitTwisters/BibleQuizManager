@@ -44,12 +44,7 @@ export default {
     },
     ...mapGetters([
       'isSessionActive'
-    ]),
-    monitorScores: () => store.state.monitor.scores,
-    monitorGame: () => store.state.monitor.game,
-    monitorQuestion: () => store.state.monitor.question,
-    monitorChoices: () => store.state.monitor.choices,
-    monitorAnswer: () => store.state.monitor.answer
+    ])
   },
   data: () => ({
     pages: [
@@ -83,23 +78,6 @@ export default {
   watch: {
     isAppDrawerActive: (val) => {
       this.showDrawer = val
-    }
-  },
-  methods: {
-    toggleMonitorScores: function () {
-      store.dispatch('monitor-scores', !this.monitorScores)
-    },
-    toggleMonitorGame: function () {
-      store.dispatch('monitor-game', !this.monitorGame)
-    },
-    toggleMonitorQuestion: function () {
-      store.dispatch('monitor-question', !this.monitorQuestion)
-    },
-    toggleMonitorChoices: function () {
-      store.dispatch('monitor-choices', !this.monitorChoices)
-    },
-    toggleMonitorAnswer: function () {
-      store.dispatch('monitor-answer', !this.monitorAnswer)
     }
   }
 }

@@ -1,51 +1,34 @@
 <template>
-  <v-card>
+  <div>
 
-    <v-card-title>
-      Panel
-    </v-card-title>
-
-    <v-list>
+    <v-card class="mb-3">
+      <v-card-title>
+        Game
+      </v-card-title>
       <v-divider></v-divider>
+      <v-card-text>
+        <div>{{ game.title }}</div>
+        <div>{{ game.date | formatDate }}</div>
+      </v-card-text>
+    </v-card>
 
-      <!-- Game details -->
-      <v-list-item>
-        <v-list-item-icon>
-          Game
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ game.title }}
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ game.date | formatDate }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-
+    <v-card class="mb-3">
+      <v-card-title>
+        Current Question
+      </v-card-title>
       <v-divider></v-divider>
+      <v-card-text>
+        <div>#{{ question.order }} - {{ question.level.name }} | {{ question.type.name }}</div>
+        <div>{{ question.score }} PTS</div>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text @click="nextQuestion">
+          Next question
+        </v-btn>
+      </v-card-actions>
+    </v-card>
 
-      <!-- Question details -->
-      <v-list-item v-if="question != null">
-        <v-list-item-icon>
-          Question
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>
-            #{{ question.order }} - {{ question.level.name }} | {{ question.type.name }}
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ question.score }} PTS
-          </v-list-item-subtitle>
-          <v-btn @click="nextQuestion">
-            Next question
-          </v-btn>
-        </v-list-item-content>
-      </v-list-item>
-      <v-divider></v-divider>
-    </v-list>
-
-  </v-card>
+  </div>
 </template>
 
 <script>

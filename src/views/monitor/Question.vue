@@ -16,11 +16,20 @@
       Reference: {{question.reference}}
     </div>
 
-    <div class="black d-flex flex-wrap pa-2" :style="{ height: choicesHeight, fontSize: '7vh' }">
-      <div v-for="choice of choices" :key="choice.id" style="flex: 1 0 calc(50% - 8px - 8px);" class="white black--text ma-2 d-flex align-center">
-        <span class="font-weight-bold px-3">{{ choice.label }}{{ choices.length == 4 && choice.label.length > 0 ? '.':'' }}</span>
-        <span>{{ choice.value }}</span>
-      </div>
+    <div class="black d-flex flex-wrap pa-2" :style="{ height: choicesHeight, fontSize: '6vh', lineHeight: '1.25em' }">
+      <template v-for="(choice, index) of choices">
+        <div  :key="choice.id" v-if="isTrueOrFalse || (isMultipleChoice && choicesShown > index)"
+          :style="{
+            flex: '1 0 calc(50% - 8px - 8px)',
+            maxWidth: 'calc(50% - 8px - 8px)',
+            maxHeight: '50%',
+            justifyContent: isMultipleChoice ? 'start' : 'center'
+          }"
+          class="white black--text ma-2 d-flex align-center">
+          <span class="font-weight-bold px-3">{{ choice.label }}{{ isMultipleChoice ? '.':'' }}</span>
+          <span>{{ choice.value }}</span>
+        </div>
+      </template>
     </div>
 
   </div>
@@ -32,6 +41,12 @@ export default {
   computed: {
     question: function () {
       return this.$store.getters.getPlayCurrentQuestion()
+    },
+    isMultipleChoice: function () {
+      return this.choices.length == 4
+    },
+    isTrueOrFalse: function () {
+      return this.choices.length == 2
     },
     level: function () {
       for (let level of this.$store.getters.getPlayLevels()) {
@@ -50,7 +65,10 @@ export default {
       return {}
     },
     choices: function () {
-      return this.$store.getters.getPlayCurrentQuestionChoices()
+      return this.$store.getters.getPlayCurrentChoices()
+    },
+    choicesShown: function () {
+      return this.$store.getters.getPlayChoicesShown()
     },
     answer: function () {
       for (let choice of this.choices) {
@@ -61,19 +79,19 @@ export default {
       return ''
     },
     questionHeight: function () {
-      if (this.choices.length == 4) {
+      if (this.isMultipleChoice) {
         return '55%'
       }
-      if (this.choices.length == 2) {
+      if (this.isTrueOrFalse) {
         return '70%'
       }
       return '75%'
     },
     choicesHeight: function () {
-      if (this.choices.length == 4) {
+      if (this.isMultipleChoice) {
         return '35%'
       }
-      if (this.choices.length == 2) {
+      if (this.isTrueOrFalse) {
         return '20%'
       }
       return '15%'

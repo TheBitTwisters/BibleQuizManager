@@ -16,9 +16,6 @@ const monitor = {
     SET_MONITOR_QUESTION (state, on) {
       state.question = on
     },
-    SET_MONITOR_CHOICES (state, on) {
-      state.choices = on
-    },
     SET_MONITOR_ANSWER (state, on) {
       state.answer = on
     }
@@ -50,12 +47,6 @@ const monitor = {
       } else {
         commit('SET_MONITOR_QUESTION', false)
       }
-      commit('SET_MONITOR_CHOICES', false)
-      commit('SET_MONITOR_ANSWER', false)
-    },
-    'monitor-choices': ({ commit }, on) => {
-      commit('SET_MONITOR_GAME', on)
-      commit('SET_MONITOR_QUESTION', false)
       commit('SET_MONITOR_CHOICES', false)
       commit('SET_MONITOR_ANSWER', false)
     },

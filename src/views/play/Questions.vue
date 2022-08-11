@@ -41,6 +41,10 @@
           </div>
         </v-list>
         <v-card-actions>
+          <v-btn v-if="quest.choices.length == 4"
+            text @click="showMultipleChoice">
+            Show choice
+          </v-btn>
         </v-card-actions>
       </v-window-item>
     </v-window>
@@ -54,7 +58,8 @@
 export default {
   name: 'view-play-questions',
   data: () => ({
-    questionStep: 1
+    questionStep: 1,
+    currentQuestionID: 0
   }),
   computed: {
     game: function () {
@@ -64,15 +69,23 @@ export default {
       return this.$store.getters.getPlayQuestions()
     }
   },
+  watch: {
+    game: function (g) {
+      if (g.current_question_id != this.currentQuestionID) {
+        this.loadCurrentQuestion()
+      }
+    }
+  },
   mounted () {
     this.loadCurrentQuestion()
   },
   methods: {
     loadCurrentQuestion: function () {
-      if (this.game.current_question_id > 0) {
+      this.currentQuestionID = this.game.current_question_id
+      if (this.currentQuestionID > 0) {
         var ctr = 1
         for (var question of this.questions) {
-          if (question.id == this.game.current_question_id) {
+          if (question.id == this.currentQuestionID) {
             this.questionStep = ctr
             break
           }
@@ -96,15 +109,8 @@ export default {
       }
       return { name: '' }
     },
-    setQuestion: function () {
-      var ctr = 1
-      for (var question of this.questions) {
-        if (ctr == this.questionStep) {
-          this.$store.dispatch('play-question', { question_id: question.id })
-          break
-        }
-        ctr++
-      }
+    showMultipleChoice: function () {
+      this.$store.dispatch('play-choice-show')
     }
   }
 }
