@@ -4,7 +4,7 @@
     <NavDrawer/>
     <Snackbar/>
     <v-main class="grey lighten-2">
-      <v-container fluid class="fill-height">
+      <v-container fluid class="fill-height" style="align-items: start;">
         <router-view/>
       </v-container>
     </v-main>

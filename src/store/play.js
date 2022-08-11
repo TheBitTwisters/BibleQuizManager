@@ -5,21 +5,25 @@ import apiQuestTypes from '@/api/quest_types'
 
 const play = {
   state: {
-    game: null,
+    game: undefined,
     levels: [],
     quest_types: [],
     questions: [],
-    players: [],
-    scores: []
+    choicesShown: 0,
+    players: []
   },
   mutations: {},
   actions: {
     'clear-game': function ({ state }) {
-      state.game = null
+      state.game = undefined
       state.questions = []
+      state.question = {
+        order: 0
+      }
+      state.choices = []
       state.players = []
     },
-    'play-game': async function ({ state, commit }, params) {
+    'play-game': async function ({ state, commit, dispatch }, params) {
       try {
         var response = {}
         response = await apiLevels.getAll()
@@ -32,6 +36,7 @@ const play = {
         state.questions = response.questions
         router.push('/play')
       } catch (err) {
+        dispatch('clear-game')
         console.log(err)
         commit('SHOW_SNACKBAR', {
           status: 'error',
@@ -39,14 +44,23 @@ const play = {
         })
       }
     },
-    'play-question': function ({ state }, params) {
-      if (state.questions.length > 0) {
-        apiGames.setCurrentQuestion({
-          game_id: state.game.id,
-          question_id: params.question_id
-        }).then(response => {
-          state.game = response.game
-        })
+    'play-next-question': function ({ state }) {
+      for (let question of state.questions) {
+        if (question.id > state.game.current_question_id) {
+          apiGames.setCurrentQuestion({
+            game_id: state.game.id,
+            question_id: question.id
+          }).then(response => {
+            state.choicesShown = 0
+            state.game = response.game
+          })
+          break
+        }
+      }
+    },
+    'play-choice-show': function ({ state }) {
+      if (state.choicesShown < 4) {
+        state.choicesShown++
       }
     },
     'play-reveal-answer': function ({ commit }) {
@@ -64,17 +78,27 @@ const play = {
       return state.quest_types
     },
     getPlayQuestions: (state) => () => {
-        return state.questions
+      return state.questions
     },
     getPlayCurrentQuestion: (state) => () => {
       for (let question of state.questions) {
         if (question.id == state.game.current_question_id) {
+          for (let level of state.levels) {
+            if (question.level_id == level.id) {
+              question.level = level
+            }
+          }
+          for (let type of state.quest_types) {
+            if (question.type_id == type.id) {
+              question.type = type
+            }
+          }
           return question
         }
       }
       return null
     },
-    getPlayCurrentQuestionChoices: (state) => () => {
+    getPlayCurrentChoices: (state) => () => {
       for (let question of state.questions) {
         if (question.id == state.game.current_question_id) {
           return question.choices

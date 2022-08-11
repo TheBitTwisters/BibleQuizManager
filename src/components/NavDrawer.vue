@@ -17,60 +17,6 @@
           <v-list-item-title>{{ page.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-group v-model="showMonitorControls">
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title>Monitor</v-list-item-title>
-          </v-list-item-content>
-        </template>
-        <v-list>
-          <v-list-item @click="toggleMonitorScores">
-            <template v-slot:default>
-              <v-list-item-content class="pl-2">
-                <v-list-item-title>Scores</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-icon v-if="monitorScores">
-                  mdi-checkbox-marked
-                </v-icon>
-                <v-icon v-else>
-                  mdi-checkbox-blank-outline
-                </v-icon>
-              </v-list-item-action>
-            </template>
-          </v-list-item>
-          <v-list-item @click="toggleMonitorGame">
-            <template v-slot:default>
-              <v-list-item-content class="pl-2">
-                <v-list-item-title>Game</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-icon v-if="monitorGame">
-                  mdi-checkbox-marked
-                </v-icon>
-                <v-icon v-else>
-                  mdi-checkbox-blank-outline
-                </v-icon>
-              </v-list-item-action>
-            </template>
-          </v-list-item>
-          <v-list-item @click="toggleMonitorQuestion">
-            <template v-slot:default>
-              <v-list-item-content class="pl-2">
-                <v-list-item-title>Question</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-icon v-if="monitorQuestion">
-                  mdi-checkbox-marked
-                </v-icon>
-                <v-icon v-else>
-                  mdi-checkbox-blank-outline
-                </v-icon>
-              </v-list-item-action>
-            </template>
-          </v-list-item>
-        </v-list>
-      </v-list-group>
     </v-list>
 
     <v-list dense v-if="!isSessionActive()">
@@ -116,16 +62,20 @@ export default {
         title: 'Games'
       },
       {
-        href: '/players',
-        title: 'Players'
+        href: '/play',
+        title: 'Play'
+      },
+      {
+        href: '/groups',
+        title: 'Groups'
+      },
+      {
+        href: '/members',
+        title: 'Members'
       },
       {
         href: '/rules',
         title: 'Rules'
-      },
-      {
-        href: '/play',
-        title: 'Play'
       }
     ],
     showMonitorControls: false

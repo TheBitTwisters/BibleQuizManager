@@ -19,15 +19,11 @@ const getAll = () => {
     })
   })
 }
-
-const getAttendance = (params) => {
+const getGroups = () => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url: '/players/attendance',
-      params: {
-        game_id: params.game_id
-      },
+      url: '/players/groups',
       headers: {
         'Authorization': store.getters.getSessionToken()
       }
@@ -42,13 +38,34 @@ const getAttendance = (params) => {
   })
 }
 
-const create = (params) => {
+const createGroup = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
-      url: '/players/',
+      url: '/players/groups',
       data: {
-        player: params
+        group: params
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+const updateGroup = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'put',
+      url: `/players/groups/${params.group_id}`,
+      data: {
+        group: params
       },
       headers: {
         'Authorization': store.getters.getSessionToken()
@@ -64,13 +81,55 @@ const create = (params) => {
   })
 }
 
-const update = (params) => {
+const createMember = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'post',
+      url: '/players/members',
+      data: {
+        member: params
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+const updateMember = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'put',
-      url: `/players/${params.player_id}`,
+      url: `/players/members/${params.member_id}`,
       data: {
-        player: params
+        member: params
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+const setMemberGroup = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'post',
+      url: `/players/members/${params.member_id}/group`,
+      data: {
+        group_id: params.group_id
       },
       headers: {
         'Authorization': store.getters.getSessionToken()
@@ -88,7 +147,10 @@ const update = (params) => {
 
 export default {
   getAll,
-  getAttendance,
-  create,
-  update
+  getGroups,
+  createGroup,
+  updateGroup,
+  createMember,
+  updateMember,
+  setMemberGroup
 }

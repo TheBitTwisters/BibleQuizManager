@@ -1,25 +1,21 @@
 <template>
-  <div id="biblequiz-monitor-scores">
-
-    <v-card>
-      <v-card-title>
-        Scores
-      </v-card-title>
-      <v-list>
-        <div v-for="topScore of topTenScores" :key="topScore.player_id">
-          <v-divider></v-divider>
-          <v-list-item>
-            <v-list-item-title class="d-flex font-weight-bold title">
-              <span>{{ getPlayerByID(topScore.player_id).fullname }}</span>
-              <v-spacer></v-spacer>
-              <span>{{ topScore.score }}</span>
-            </v-list-item-title>
-          </v-list-item>
-        </div>
-      </v-list>
-    </v-card>
-
-  </div>
+  <v-card>
+    <v-card-title>
+      Scores
+    </v-card-title>
+    <v-list>
+      <div v-for="topScore of topTenScores" :key="topScore.player_id">
+        <v-divider></v-divider>
+        <v-list-item>
+          <v-list-item-title class="d-flex font-weight-bold title">
+            <span>{{ getPlayerByID(topScore.player_id).fullname }}</span>
+            <v-spacer></v-spacer>
+            <span>{{ topScore.score }}</span>
+          </v-list-item-title>
+        </v-list-item>
+      </div>
+    </v-list>
+  </v-card>
 </template>
 
 <script>

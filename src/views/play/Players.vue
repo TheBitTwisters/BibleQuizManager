@@ -1,21 +1,17 @@
 <template>
-  <div id="biblequiz-play-scores">
-
-    <v-card>
-      <v-card-title>
-        Players
-      </v-card-title>
-      <v-data-table :headers="headers" :items="scores"
-        :loading="loadingScores"
-        :items-per-page="-1"
-        :hide-default-footer="true">
-        <template v-slot:item.player_id="{ item }">
-          {{ getPlayerByID(item.player_id).fullname }}
-        </template>
-      </v-data-table>
-    </v-card>
-
-  </div>
+  <v-card>
+    <v-card-title>
+      Players
+    </v-card-title>
+    <v-data-table :headers="headers" :items="scores"
+      :loading="loadingScores"
+      :items-per-page="-1"
+      :hide-default-footer="true">
+      <template v-slot:item.player_id="{ item }">
+        {{ getPlayerByID(item.player_id).fullname }}
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script>

@@ -4,9 +4,10 @@ import VueRouter from 'vue-router'
 import ViewLogin from '@/views/Login'
 
 import ViewGames from '@/views/list/Games'
-import ViewPlayers from '@/views/list/Players'
 import ViewGameQuestions from '@/views/list/Questions'
 
+import ViewGroups from '@/views/list/Groups'
+import ViewMembers from '@/views/list/Members'
 import ViewRules from '@/views/rules/Index'
 
 import ViewDashboard from '@/views/Dashboard'
@@ -45,9 +46,14 @@ const routes = [
     component: ViewGames
   },
   {
-    path: '/players',
-    name: 'Players',
-    component: ViewPlayers
+    path: '/groups',
+    name: 'Groups',
+    component: ViewGroups
+  },
+  {
+    path: '/members',
+    name: 'Members',
+    component: ViewMembers
   },
   {
     path: '/rules',
