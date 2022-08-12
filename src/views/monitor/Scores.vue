@@ -4,7 +4,7 @@
       {{ monitorGame ? 'Scores' : 'Total Scores' }}
     </v-card-title>
     <v-list>
-      <div v-for="(score, index) of topTenScores" :key="score.name">
+      <div v-for="(score, index) in topTenScores" :key="score.name">
         <v-divider></v-divider>
         <v-list-item>
           <v-list-item-icon>
@@ -14,7 +14,7 @@
             {{ score.name }}
           </v-list-item-content>
           <v-list-item-action>
-            {{ score.score }}
+            {{ score.score || 0 }}
           </v-list-item-action>
         </v-list-item>
       </div>
@@ -68,7 +68,7 @@ export default {
         var self = this
         setTimeout(function () {
           self.getScores()
-        }, 2500)
+        }, 1000)
       }
     },
     getPlayerByID: function (player_id) {

@@ -75,7 +75,7 @@ const play = {
       }
     },
     'play-choice-show': function ({ state, commit }) {
-      if (state.choicesShown < 4) {
+      if (state.game.current_question_id > 0 && state.choicesShown < 4) {
         commit('SET_PLAY_CHOICES_SHOWN', state.choicesShown + 1)
       }
     },

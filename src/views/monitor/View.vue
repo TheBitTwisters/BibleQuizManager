@@ -4,10 +4,10 @@
     <Question v-if="showQuestion"/>
 
     <v-row v-else class="fill-height" align="center" justify="center">
-      <v-col md="7" lg="8">
+      <v-col md="8">
         <Title/>
       </v-col>
-      <v-col md="5" lg="4">
+      <v-col md="4">
         <Scores/>
       </v-col>
     </v-row>

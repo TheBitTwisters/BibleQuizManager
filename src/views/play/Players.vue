@@ -11,8 +11,11 @@
       :loading="loadingScores"
       :items-per-page="-1"
       :hide-default-footer="true">
+      <template v-slot:item.order="{ index }">
+        {{ index + 1 | formatOrdinal }}
+      </template>
       <template v-slot:item.score="{ item }">
-        {{ item.score ? item.score : 0 }}
+        {{ item.score || 0 }}
       </template>
     </v-data-table>
 
@@ -40,6 +43,10 @@ export default {
   data: () => ({
     loadingScores: false,
     headers: [
+      {
+        text: '#',
+        value: 'order'
+      },
       {
         text: 'Player',
         value: 'name'
