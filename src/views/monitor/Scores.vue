@@ -1,17 +1,21 @@
 <template>
   <v-card>
     <v-card-title>
-      Scores
+      {{ monitorGame ? 'Scores' : 'Total Scores' }}
     </v-card-title>
     <v-list>
-      <div v-for="topScore of topTenScores" :key="topScore.player_id">
+      <div v-for="(score, index) of topTenScores" :key="score.name">
         <v-divider></v-divider>
         <v-list-item>
-          <v-list-item-title class="d-flex font-weight-bold title">
-            <span>{{ getPlayerByID(topScore.player_id).fullname }}</span>
-            <v-spacer></v-spacer>
-            <span>{{ topScore.score }}</span>
-          </v-list-item-title>
+          <v-list-item-icon>
+            {{ index + 1 | formatOrdinal }}
+          </v-list-item-icon>
+          <v-list-item-content>
+            {{ score.name }}
+          </v-list-item-content>
+          <v-list-item-action>
+            {{ score.score }}
+          </v-list-item-action>
         </v-list-item>
       </div>
     </v-list>
@@ -19,6 +23,7 @@
 </template>
 
 <script>
+import apiScores from '@/api/scores'
 import apiGames from '@/api/games'
 
 export default {
@@ -54,7 +59,7 @@ export default {
         if (this.monitorGame && this.game.id > 0) {
           response = await apiGames.getScores({ game_id: this.game.id })
         } else {
-          response = await apiGames.getAllGamesScores()
+          response = await apiScores.getTotalScores()
         }
         this.scores = response.scores
       } catch (err) {

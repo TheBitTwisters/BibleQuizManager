@@ -63,7 +63,7 @@ const updateGroup = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'put',
-      url: `/players/groups/${params.group_id}`,
+      url: `/players/groups/${params.id}`,
       data: {
         group: params
       },

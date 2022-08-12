@@ -13,7 +13,7 @@
     </v-card>
 
     <v-card tile color="teal" v-if="monitorGame">
-      <v-card-title class="white--text">
+      <v-card-title class="white--text flex-column align-start">
         <div class="text-h4 pa-5 pb-1">
           {{ game.title }}
         </div>

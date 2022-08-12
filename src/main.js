@@ -5,6 +5,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 
 import '@/filters/datetime'
+import '@/filters/ordinal'
 
 Vue.config.productionTip = false
 

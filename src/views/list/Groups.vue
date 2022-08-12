@@ -117,18 +117,16 @@ export default {
       this.form.success = false
       this.form.data = {
         id: 0,
-        name: '',
-        last_name: '',
-        first_name: ''
+        name: ''
       }
       this.form.show = true
     },
-    editGroup: function (player) {
+    editGroup: function (group) {
       this.form.submitting = false
       this.form.success = false
       this.form.data = {
-        id: player.id,
-        name: player.name
+        id: group.id,
+        name: group.name
       }
       this.form.show = true
     },
@@ -138,7 +136,7 @@ export default {
         var response = {}
         if (this.form.data.id > 0) {
           response = await apiPlayers.updateGroup({
-            player_id: this.form.data.id,
+            id: this.form.data.id,
             name: this.form.data.name
           })
         } else {
