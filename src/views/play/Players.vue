@@ -1,34 +1,48 @@
 <template>
   <v-card>
+
     <v-card-title>
       Players
+      <v-spacer></v-spacer>
+      <v-btn text @click="formAttendance.show = true">Check Attendance</v-btn>
     </v-card-title>
+
     <v-data-table :headers="headers" :items="scores"
       :loading="loadingScores"
       :items-per-page="-1"
       :hide-default-footer="true">
-      <template v-slot:item.player_id="{ item }">
-        {{ getPlayerByID(item.player_id).fullname }}
+      <template v-slot:item.score="{ item }">
+        {{ item.score ? item.score : 0 }}
       </template>
     </v-data-table>
+
+    <v-dialog v-model="formAttendance.show" max-width="760">
+      <Attendance/>
+    </v-dialog>
+
   </v-card>
 </template>
 
 <script>
-import store from '@/store'
+import Attendance from './Attendance'
 import apiGames from '@/api/games'
 
 export default {
   name: 'view-play-scores',
+  components: {
+    Attendance
+  },
   computed: {
-    game: () => store.state.play.game
+    game: function () {
+      return this.$store.getters.getPlayGame()
+    }
   },
   data: () => ({
     loadingScores: false,
     headers: [
       {
         text: 'Player',
-        value: 'player_id'
+        value: 'name'
       },
       {
         text: 'Score',
@@ -36,7 +50,10 @@ export default {
       }
     ],
     scores: [],
-    answers: []
+    answers: [],
+    formAttendance: {
+      show: false
+    }
   }),
   mounted () {
     this.getScores()
@@ -54,7 +71,7 @@ export default {
         })
     },
     getPlayerByID: function (player_id) {
-      for (let player of store.state.play.players) {
+      for (let player of this.$store.getters.getPlayAttendance()) {
         if (player.id == player_id) {
           return player
         }

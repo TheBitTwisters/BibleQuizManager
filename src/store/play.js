@@ -16,6 +16,9 @@ const play = {
     SET_PLAY_GAME (state, game) {
       state.game = game
     },
+    SET_PLAY_ATTENDANCE (state, players) {
+      state.players = players
+    },
     SET_PLAY_CHOICES_SHOWN (state, shown) {
       state.choicesShown = shown
     }
@@ -38,6 +41,8 @@ const play = {
         commit('SET_PLAY_GAME', response.game)
         response = await apiGames.getQuestions({ game_id: params.game_id })
         state.questions = response.questions
+        response = await apiGames.getPlayers({ game_id: params.game_id })
+        commit('SET_PLAY_ATTENDANCE', response.players)
         router.push('/play')
       } catch (err) {
         dispatch('clear-game')
@@ -81,6 +86,9 @@ const play = {
   getters: {
     getPlayGame: (state) => () => {
       return state.game
+    },
+    getPlayAttendance: (state) => () => {
+      return state.players
     },
     getPlayLevels: (state) => () => {
       return state.levels

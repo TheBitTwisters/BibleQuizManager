@@ -12,7 +12,7 @@
       </v-card-text>
     </v-card>
 
-    <v-card class="mb-3">
+    <v-card class="mb-3" v-if="question != undefined">
       <v-card-title>
         Current Question
       </v-card-title>

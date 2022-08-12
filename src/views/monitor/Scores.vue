@@ -19,14 +19,17 @@
 </template>
 
 <script>
-import store from '@/store'
 import apiGames from '@/api/games'
 
 export default {
   name: 'view-monitor-scores',
   computed: {
-    monitorGame: () => store.state.monitor.game,
-    game: () => store.getters.getPlayGame(),
+    monitorGame: function () {
+      return this.$store.state.monitor.game
+    },
+    game: function () {
+      return this.$store.getters.getPlayGame()
+    },
     topTenScores: function () {
       var scores = []
       for (let score of this.scores) {
@@ -64,7 +67,7 @@ export default {
       }
     },
     getPlayerByID: function (player_id) {
-      for (let player of store.state.play.players) {
+      for (let player of this.$store.state.play.players) {
         if (player.id == player_id) {
           return player
         }

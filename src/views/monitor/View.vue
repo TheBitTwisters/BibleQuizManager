@@ -7,7 +7,7 @@
       <v-col md="7" lg="8">
         <Title/>
       </v-col>
-      <v-col md="5" lg="4" v-if="showScores">
+      <v-col md="5" lg="4">
         <Scores/>
       </v-col>
     </v-row>
@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import store from '@/store'
 import Title from './Title'
 import Question from './Question'
 import Scores from './Scores'
@@ -29,10 +28,18 @@ export default {
     Scores
   },
   computed: {
-    game: () => store.getters.getPlayGame(),
-    showScores: () => store.state.monitor.scores,
-    showGame: () => store.state.monitor.game,
-    showQuestion: () => store.state.monitor.question
+    currentGame: function () {
+      return this.$store.getters.getPlayGame()
+    },
+    showScores: function () {
+      return this.$store.state.monitor.scores
+    },
+    showGame: function () {
+      return this.$store.state.monitor.game
+    },
+    showQuestion: function () {
+      return this.$store.state.monitor.question
+    }
   },
   methods: {
   }

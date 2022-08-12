@@ -58,6 +58,25 @@ const getQuestions = (params) => {
   })
 }
 
+const getPlayers = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'get',
+      url: `/games/${params.game_id}/players`,
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
 const getScores = (params) => {
   return new Promise((resolve, reject) => {
     axios({
@@ -85,6 +104,26 @@ const setCurrentQuestion = (params) => {
       data: {
         question_id: params.question_id
       },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
+const addPlayer = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'post',
+      url: `/games/${params.game_id}/player`,
+      data: params,
       headers: {
         'Authorization': store.getters.getSessionToken()
       }
@@ -147,8 +186,10 @@ export default {
   getAll,
   getDetails,
   getQuestions,
+  getPlayers,
   getScores,
   setCurrentQuestion,
+  addPlayer,
   create,
   update
 }

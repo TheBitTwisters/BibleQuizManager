@@ -10,6 +10,9 @@
     <v-col md="3">
       <Players/>
     </v-col>
+    <v-col cols="12">
+
+    </v-col>
   </v-row>
 </template>
 
