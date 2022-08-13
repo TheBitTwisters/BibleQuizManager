@@ -6,6 +6,7 @@
     </v-col>
     <v-col md="6">
       <Questions/>
+      <Answers/>
     </v-col>
     <v-col md="3">
       <Players/>
@@ -21,6 +22,7 @@ import Panel from './Panel'
 import Monitor from './Monitor'
 import Questions from './Questions'
 import Players from './Players'
+import Answers from './Answers'
 
 export default {
   name: 'view-play',
@@ -28,7 +30,8 @@ export default {
     Panel,
     Monitor,
     Questions,
-    Players
+    Players,
+    Answers
   },
   computed: {
     game: function () {

@@ -28,6 +28,14 @@
       </v-card-actions>
     </v-card>
 
+    <v-card class="mb-3" v-else>
+      <v-card-actions>
+        <v-btn text @click="nextQuestion">
+          Start question
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+
   </div>
 </template>
 

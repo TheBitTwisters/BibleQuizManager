@@ -1,13 +1,13 @@
 import axios from '@/plugins/axios'
 import store from '@/store'
 
-const checkAnswers = (params) => {
+const saveScore = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
-      url: '/answers/check',
+      url: `/answers/${params.answer_id}/score`,
       data: {
-        question_id: params.question_id
+        score: params.score
       },
       headers: {
         'Authorization': store.getters.getSessionToken()
@@ -24,5 +24,5 @@ const checkAnswers = (params) => {
 }
 
 export default {
-  checkAnswers
+  saveScore
 }

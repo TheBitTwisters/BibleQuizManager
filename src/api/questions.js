@@ -1,6 +1,28 @@
 import axios from '@/plugins/axios'
 import store from '@/store'
 
+const getSubmittedAnswers = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'get',
+      url: `/questions/${params.question_id}/answers`,
+      data: {
+        question_id: params.question_id
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
+
 const create = (params) => {
   return new Promise((resolve, reject) => {
     axios({
@@ -65,6 +87,7 @@ const lock = (params) => {
 }
 
 export default {
+  getSubmittedAnswers,
   create,
   update,
   lock

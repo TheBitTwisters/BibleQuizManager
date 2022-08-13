@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="mb-3">
     <v-window v-model="questionStep">
       <v-window-item v-for="(quest, index) of questions" :key="index" :value="index + 1">
         <v-card-title>

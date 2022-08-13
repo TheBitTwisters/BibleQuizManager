@@ -125,6 +125,18 @@ const play = {
       }
       return []
     },
+    getPlayQuestionAnswer: (state) => () => {
+      for (let question of state.questions) {
+        if (question.id == state.game.current_question_id) {
+          for (let choice of question.choices) {
+            if (choice.is_answer == 1) {
+              return choice.label
+            }
+          }
+        }
+      }
+      return ''
+    },
     getPlayChoicesShown: (state) => () => {
       return state.choicesShown
     },
