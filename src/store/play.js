@@ -80,7 +80,7 @@ const play = {
       }
     },
     'play-reveal-answer': function ({ commit }) {
-      commit('SHOW_MONITOR_REVEAL_ANSWER')
+      commit('SET_MONITOR_ANSWER', true)
     }
   },
   getters: {

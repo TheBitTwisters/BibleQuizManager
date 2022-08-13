@@ -18,12 +18,13 @@
 
     <div class="black d-flex flex-wrap pa-2" :style="{ height: choicesHeight, fontSize: '6vh', lineHeight: '1.25em' }">
       <template v-for="(choice, index) of choices">
-        <div  :key="choice.id" v-if="isTrueOrFalse || (isMultipleChoice && choicesShown > index)"
+        <div :key="choice.id" v-if="isTrueOrFalse || (isMultipleChoice && choicesShown > index) || (isIdentification && showAnswer)"
           :style="{
             flex: '1 0 calc(50% - 8px - 8px)',
             maxWidth: 'calc(50% - 8px - 8px)',
             maxHeight: '50%',
-            justifyContent: isMultipleChoice ? 'start' : 'center'
+            justifyContent: isMultipleChoice ? 'start' : 'center',
+            background: showAnswer && choice.is_answer == 1 ? 'green' : 'white'
           }"
           class="white black--text ma-2 d-flex align-center">
           <span class="font-weight-bold px-3">{{ choice.label }}{{ isMultipleChoice ? '.':'' }}</span>
@@ -47,6 +48,9 @@ export default {
     },
     isTrueOrFalse: function () {
       return this.choices.length == 2
+    },
+    isIdentification: function () {
+      return this.choices.length == 1
     },
     level: function () {
       for (let level of this.$store.getters.getPlayLevels()) {
@@ -95,6 +99,9 @@ export default {
         return '20%'
       }
       return '15%'
+    },
+    showAnswer: function () {
+      return this.$store.state.monitor.answer
     }
   },
   data: () => ({

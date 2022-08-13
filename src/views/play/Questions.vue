@@ -45,6 +45,11 @@
             text @click="showMultipleChoice">
             Show choice
           </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            text @click="revealAnswer">
+            Reveal answer
+          </v-btn>
         </v-card-actions>
       </v-window-item>
     </v-window>
@@ -111,6 +116,9 @@ export default {
     },
     showMultipleChoice: function () {
       this.$store.dispatch('play-choice-show')
+    },
+    revealAnswer: function () {
+      this.$store.commit('SET_MONITOR_ANSWER', true)
     }
   }
 }
