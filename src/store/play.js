@@ -61,6 +61,7 @@ const play = {
               game_id: state.game.id,
               question_id: question.id
             })
+            commit('SET_MONITOR_ANSWER', false)
             commit('SET_PLAY_CHOICES_SHOWN', 0)
             commit('SET_PLAY_GAME', response.game)
           } catch (err) {

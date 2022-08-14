@@ -24,7 +24,7 @@
             maxWidth: 'calc(50% - 8px - 8px)',
             maxHeight: '50%',
             justifyContent: isMultipleChoice ? 'start' : 'center',
-            background: showAnswer && choice.is_answer == 1 ? 'green' : 'white'
+            backgroundColor: showAnswer && choice.is_answer == 1 ? 'lime !important' : 'white'
           }"
           class="white black--text ma-2 d-flex align-center">
           <span class="font-weight-bold px-3">{{ choice.label }}{{ isMultipleChoice ? '.':'' }}</span>
