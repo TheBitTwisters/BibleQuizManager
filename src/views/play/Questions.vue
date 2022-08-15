@@ -1,67 +1,83 @@
 <template>
-  <v-card class="mb-3">
-    <v-window v-model="questionStep">
-      <v-window-item v-for="(quest, index) of questions" :key="index" :value="index + 1">
-        <v-card-title>
-          <v-btn text
-            :disabled="questionStep === 1"
-            @click="questionStep--">
-            Prev
-          </v-btn>
-          <v-spacer></v-spacer>
-          <div class="text-center">
-            <div>Question #{{quest.order}} - {{ quest.score }} pts</div>
-            <div>{{ getLevelByID(quest.level_id).name }} | {{ getQuestTypeByID(quest.type_id).name }}</div>
-          </div>
-          <v-spacer></v-spacer>
-          <v-btn text
-            :disabled="questionStep === questions.length"
-            @click="questionStep++">
-            Next
-          </v-btn>
-        </v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <div class="text-h4">
-            {{ quest.question }}
-          </div>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-list>
-          <div v-for="choice in quest.choices" :key="choice.id">
-            <v-list-item>
-              <v-list-item-icon>
-                {{ choice.label }}
-              </v-list-item-icon>
-              <v-list-item-content>
-                {{ choice.value }}
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-          </div>
-        </v-list>
-        <v-card-actions>
-          <v-btn v-if="quest.choices.length == 4"
-            text @click="showMultipleChoice">
-            Show choice
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            text @click="revealAnswer">
-            Reveal answer
-          </v-btn>
-        </v-card-actions>
-      </v-window-item>
-    </v-window>
-    <v-card-actions>
+  <div>
 
-    </v-card-actions>
-  </v-card>
+    <v-card class="mb-3">
+      <v-window v-model="questionStep">
+        <v-window-item v-for="(quest, index) of questions" :key="index" :value="index + 1">
+          <v-card-title>
+            <v-btn text
+              :disabled="questionStep === 1"
+              @click="questionStep--">
+              Prev
+            </v-btn>
+            <v-spacer></v-spacer>
+            <div>Question #{{quest.order}} - {{ quest.score }} pts</div>
+            <v-spacer></v-spacer>
+            <v-btn text
+              :disabled="questionStep === questions.length"
+              @click="questionStep++">
+              Next
+            </v-btn>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-row>
+              <v-col md="8">
+                <div class="text-h4">
+                  {{ quest.question }}
+                </div>
+              </v-col>
+              <v-col md="4">
+                <div>{{ getLevelByID(quest.level_id).name }} | {{ getQuestTypeByID(quest.type_id).name }}</div>
+                <v-list dense>
+                  <v-subheader>Choices / Answer</v-subheader>
+                  <div v-for="choice in quest.choices" :key="choice.id">
+                    <v-list-item>
+                      <v-list-item-icon class="mr-0" v-if="quest.choices.length == 4">
+                        {{ choice.label }}
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        {{ quest.choices.length == 2 ? choice.label : choice.value }}
+                      </v-list-item-content>
+                    </v-list-item>
+                  </div>
+                </v-list>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn v-if="quest.choices.length == 4"
+              text @click="showMultipleChoice">
+              Show choice
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn :disabled="quest.locked_at != null"
+              text @click="lockQuestion">
+              Lock question
+            </v-btn>
+            <v-btn :disabled="quest.locked_at == null"
+              text @click="revealAnswer">
+              Reveal answer
+            </v-btn>
+          </v-card-actions>
+        </v-window-item>
+      </v-window>
+    </v-card>
+
+    <Answers :question="currentViewingQuestion"/>
+  </div>
 </template>
 
 <script>
+import apiQuestions from '@/api/questions'
+import Answers from './Answers'
+
 export default {
   name: 'view-play-questions',
+  components: {
+    Answers
+  },
   data: () => ({
     questionStep: 1,
     currentQuestionID: 0
@@ -72,6 +88,9 @@ export default {
     },
     questions: function () {
       return this.$store.getters.getPlayQuestions()
+    },
+    currentViewingQuestion: function () {
+      return this.questions[this.questionStep - 1]
     }
   },
   watch: {
@@ -116,6 +135,12 @@ export default {
     },
     showMultipleChoice: function () {
       this.$store.dispatch('play-choice-show')
+    },
+    lockQuestion: function () {
+      apiQuestions.lock({ question_id: this.question.id })
+        .then(data => {
+          this.$store.commit('SET_PLAY_QUESTION_UPDATE', data.question)
+        })
     },
     revealAnswer: function () {
       this.$store.commit('SET_MONITOR_ANSWER', true)

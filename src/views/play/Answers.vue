@@ -2,16 +2,15 @@
   <v-card>
 
     <v-card-title>
-      Answers
-      <v-spacer></v-spacer>
       <v-btn icon @click="getAnswers">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
+      Answers <span>({{answers.length}})</span>
+      <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <v-btn icon @click="checkAnswers">
         <v-icon>mdi-check</v-icon>
       </v-btn>
-      <v-spacer></v-spacer>
       <v-btn text @click="saveScores">Save scores</v-btn>
     </v-card-title>
 
@@ -36,13 +35,17 @@ import apiAnswers from '@/api/answers'
 
 export default {
   name: 'view-play-answers',
-  computed: {
-    question: function () {
-      return this.$store.getters.getPlayCurrentQuestion()
+  props: {
+    question: {
+      type: Object
     }
   },
   data: () => ({
     headers: [
+      {
+        text: '#',
+        value: 'order'
+      },
       {
         text: 'Player',
         value: 'name'
@@ -59,6 +62,11 @@ export default {
     answers: [],
     savingScores: false
   }),
+  watch: {
+    question: function () {
+      this.getAnswers()
+    }
+  },
   mounted () {
     this.getAnswers()
   },
@@ -69,6 +77,12 @@ export default {
           this.answers = response.answers
         }).catch(err => {
           console.log(err)
+        }).finally(() => {
+          if (this.question.locked_at == null) {
+            setTimeout(() => {
+              this.getAnswers()
+            }, 1000)
+          }
         })
     },
     checkAnswers: function () {
@@ -84,7 +98,6 @@ export default {
         for (let answer of this.answers) {
           await apiAnswers.saveScore({ answer_id: answer.id, score: answer.score })
         }
-        await apiQuestions.lock({ question_id: this.question.id })
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: 'Scores saved'

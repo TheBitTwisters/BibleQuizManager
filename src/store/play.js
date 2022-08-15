@@ -21,6 +21,14 @@ const play = {
     },
     SET_PLAY_CHOICES_SHOWN (state, shown) {
       state.choicesShown = shown
+    },
+    SET_PLAY_QUESTION_UPDATE (state, question) {
+      for (let i = 0; i < state.questions.length; i++) {
+        if (state.questions[i].id == question.id) {
+          state.questions[i] = question
+          break
+        }
+      }
     }
   },
   actions: {
