@@ -134,7 +134,6 @@
 </template>
 
 <script>
-import store from '@/store'
 import apiLevels from '@/api/levels'
 import apiQuestTypes from '@/api/quest_types'
 import apiGames from '@/api/games'
@@ -324,7 +323,7 @@ export default {
         } else {
           response = await apiQuestions.create(this.form.data)
         }
-        store.commit('SHOW_SNACKBAR', {
+        this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: response.message
         })
@@ -343,7 +342,7 @@ export default {
         if (this.form.data.id > 0) {
           this.saveChoices();
         }
-        store.commit('SHOW_SNACKBAR', {
+        this.$store.commit('SHOW_SNACKBAR', {
           status: 'error',
           message: err.message
         })
@@ -367,14 +366,14 @@ export default {
             choice.is_answer = this.form.model.answer == choice.label ? 1 : 0
             response = await apiChoices.create(choice)
           }
-          store.commit('SHOW_SNACKBAR', {
+          this.$store.commit('SHOW_SNACKBAR', {
             status: 'success',
             message: response.message
           })
           choice.id = response.choice.id
         } catch(err) {
           console.log(err)
-          store.commit('SHOW_SNACKBAR', {
+          this.$store.commit('SHOW_SNACKBAR', {
             status: 'error',
             message: err.message
           })
@@ -384,12 +383,12 @@ export default {
     deleteChoice: async function (choice_id) {
       var response = await apiChoices.deleteChoice({ choice_id: choice_id })
       if (!response.err) {
-        store.commit('SHOW_SNACKBAR', {
+        this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: response.message
         })
       } else {
-        store.commit('SHOW_SNACKBAR', {
+        this.$store.commit('SHOW_SNACKBAR', {
           status: 'error',
           message: response.message
         })

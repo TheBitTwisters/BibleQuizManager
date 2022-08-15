@@ -40,12 +40,13 @@ export default {
       type: Object
     }
   },
+  computed: {
+    currentGameQuestion: function () {
+      return this.$store.getters.getPlayCurrentQuestion()
+    }
+  },
   data: () => ({
     headers: [
-      {
-        text: '#',
-        value: 'order'
-      },
       {
         text: 'Player',
         value: 'name'
@@ -78,7 +79,8 @@ export default {
         }).catch(err => {
           console.log(err)
         }).finally(() => {
-          if (this.question.locked_at == null) {
+          if (this.question.locked_at == null &&
+              this.currentGameQuestion.id == this.question.id) {
             setTimeout(() => {
               this.getAnswers()
             }, 1000)

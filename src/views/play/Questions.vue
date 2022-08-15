@@ -49,7 +49,7 @@
           <v-card-actions>
             <v-btn v-if="quest.choices.length == 4"
               text @click="showMultipleChoice">
-              Show choice
+              Show choices ({{choicesShown}})
             </v-btn>
             <v-spacer></v-spacer>
             <v-btn :disabled="quest.locked_at != null"
@@ -91,6 +91,9 @@ export default {
     },
     currentViewingQuestion: function () {
       return this.questions[this.questionStep - 1]
+    },
+    choicesShown: function () {
+      return this.$store.getters.getPlayChoicesShown()
     }
   },
   watch: {
@@ -143,7 +146,7 @@ export default {
         })
     },
     revealAnswer: function () {
-      this.$store.commit('SET_MONITOR_ANSWER', true)
+      this.$store.dispatch('monitor-answer', true)
     }
   }
 }

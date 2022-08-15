@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import store from '@/store'
 import apiAuth from '@/api/auth'
 
 export default {
@@ -42,7 +41,7 @@ export default {
     }
   }),
   beforeMount () {
-    store.commit('SET_APP_DRAWER', false)
+    this.$store.commit('SET_APP_DRAWER', false)
   },
   methods: {
     login: function () {
@@ -50,15 +49,15 @@ export default {
       this.form.message = ''
       apiAuth.login(this.form.data)
         .then(data => {
-          store.commit('SHOW_SNACKBAR', {
+          this.$store.commit('SHOW_SNACKBAR', {
             status: 'success',
             message: data.message
           })
-          store.dispatch('session-login', data)
+          this.$store.dispatch('session-login', data)
         })
         .catch(err => {
           console.log(err)
-          store.commit('SHOW_SNACKBAR', {
+          this.$store.commit('SHOW_SNACKBAR', {
             status: 'error',
             message: err.message
           })

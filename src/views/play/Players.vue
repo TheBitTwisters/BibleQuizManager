@@ -2,10 +2,10 @@
   <v-card>
 
     <v-card-title>
-      Players
-      <v-spacer></v-spacer>
-      <v-btn text @click="formAttendance.show = true">Check Attendance</v-btn>
+      Players ({{ players.length }})
     </v-card-title>
+
+    <v-divider></v-divider>
 
     <v-data-table :headers="headers" :items="scores"
       :loading="loadingScores"
@@ -18,6 +18,12 @@
         {{ item.score || 0 }}
       </template>
     </v-data-table>
+
+    <v-divider></v-divider>
+
+    <v-card-actions>
+      <v-btn text @click="formAttendance.show = true">Set Attendance</v-btn>
+    </v-card-actions>
 
     <v-dialog v-model="formAttendance.show" max-width="760">
       <Attendance/>
@@ -38,6 +44,9 @@ export default {
   computed: {
     game: function () {
       return this.$store.getters.getPlayGame()
+    },
+    players: function () {
+      return this.$store.getters.getPlayAttendance()
     }
   },
   data: () => ({
@@ -78,7 +87,7 @@ export default {
         })
     },
     getPlayerByID: function (player_id) {
-      for (let player of this.$store.getters.getPlayAttendance()) {
+      for (let player of this.players) {
         if (player.id == player_id) {
           return player
         }

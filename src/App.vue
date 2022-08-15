@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <Appbar/>
-    <NavDrawer/>
-    <Snackbar/>
+    <Appbar v-if="!isCurrentPageMonitor"/>
+    <NavDrawer v-if="!isCurrentPageMonitor"/>
+    <Snackbar v-if="!isCurrentPageMonitor"/>
     <v-main class="grey lighten-2">
       <v-container fluid class="fill-height" style="align-items: start;">
         <router-view/>
@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import store from '@/store'
 import Appbar from '@/components/Appbar'
 import NavDrawer from '@/components/NavDrawer'
 import Snackbar from '@/components/Snackbar'
@@ -24,11 +23,13 @@ export default {
     NavDrawer,
     Snackbar
   },
-  data: () => ({
-    //
-  }),
+  computed: {
+    isCurrentPageMonitor: function () {
+      return this.$router.currentRoute.name == 'Monitor'
+    }
+  },
   mounted () {
-    store.dispatch('session-check')
+    this.$store.dispatch('session-check')
   }
 }
 </script>

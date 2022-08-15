@@ -27,13 +27,15 @@
 </template>
 
 <script>
-import store from '@/store'
-
 export default {
   name: 'view-monitor-title',
   computed: {
-    game: () => store.getters.getPlayGame(),
-    monitorGame: () => store.state.monitor.game
+    game: function () {
+      return this.$store.getters.getPlayGame()
+    },
+    monitorGame: function () {
+      return this.$store.state.monitor.game
+    }
   }
 }
 </script>

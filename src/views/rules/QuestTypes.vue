@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import store from '@/store'
 import apiQuestTypes from '@/api/quest_types'
 
 export default {
@@ -137,7 +136,7 @@ export default {
         } else {
           response = await apiQuestTypes.create(this.form.data)
         }
-        store.commit('SHOW_SNACKBAR', {
+        this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: response.message
         })
@@ -148,7 +147,7 @@ export default {
         }
       } catch(err) {
         console.log(err)
-        store.commit('SHOW_SNACKBAR', {
+        this.$store.commit('SHOW_SNACKBAR', {
           status: 'error',
           message: err.message
         })

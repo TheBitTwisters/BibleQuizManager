@@ -64,9 +64,6 @@
 export default {
   name: 'view-play-monitor',
   computed: {
-    monitorScores: function () {
-      return this.$store.state.monitor.scores
-    },
     monitorGame: function () {
       return this.$store.state.monitor.game
     },
@@ -81,9 +78,6 @@ export default {
     }
   },
   methods: {
-    toggleMonitorScores: function () {
-      this.$store.dispatch('monitor-scores', !this.monitorScores)
-    },
     toggleMonitorGame: function () {
       this.$store.dispatch('monitor-game', !this.monitorGame)
     },
