@@ -14,9 +14,6 @@
       <template v-slot:item.group_id="{ item }">
         {{ getGroupByID(item.group_id).name }}
       </template>
-      <template v-slot:item.fullname="{ item }">
-        {{ item.first_name + ' ' + item.last_name }}
-      </template>
       <template v-slot:item.joined_at="{ item }">
         {{ item.joined_at | formatDate }}
       </template>
@@ -117,8 +114,12 @@ export default {
         value: 'group_id',
       },
       {
-        text: 'Fullname',
-        value: 'fullname'
+        text: 'Last name',
+        value: 'last_name'
+      },
+      {
+        text: 'First name',
+        value: 'first_name'
       },
       {
         text: 'Date joined',

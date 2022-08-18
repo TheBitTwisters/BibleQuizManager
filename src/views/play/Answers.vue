@@ -11,7 +11,10 @@
       <v-btn icon @click="checkAnswers">
         <v-icon>mdi-check</v-icon>
       </v-btn>
-      <v-btn text @click="saveScores">Save scores</v-btn>
+      <v-btn text :disabled="!question.locked_at"
+        @click="saveScores">
+        Save scores
+      </v-btn>
     </v-card-title>
 
     <v-data-table :headers="headers" :items="answers"
@@ -49,27 +52,35 @@ export default {
     headers: [
       {
         text: 'Player',
-        value: 'name'
+        value: 'name',
+        width: '30%'
       },
       {
         text: 'Answer',
-        value: 'answer',
+        value: 'answer'
       },
       {
         text: 'Score',
         value: 'score',
+        width: '20%'
       }
     ],
     answers: [],
-    savingScores: false
+    savingScores: false,
+    loopingRequest: null
   }),
   watch: {
     question: function () {
-      this.getAnswers()
+      if (this.loopingRequest != null) {
+        clearInterval(this.loopingRequest)
+      }
+      if (this.question.locked_at == null &&
+          this.currentGameQuestion.id == this.question.id) {
+        this.loopingRequest = setInterval(this.getAnswers, 1000)
+      } else {
+        this.getAnswers()
+      }
     }
-  },
-  mounted () {
-    this.getAnswers()
   },
   methods: {
     getAnswers: function () {
@@ -78,13 +89,6 @@ export default {
           this.answers = response.answers
         }).catch(err => {
           console.log(err)
-        }).finally(() => {
-          if (this.question.locked_at == null &&
-              this.currentGameQuestion.id == this.question.id) {
-            setTimeout(() => {
-              this.getAnswers()
-            }, 1000)
-          }
         })
     },
     checkAnswers: function () {

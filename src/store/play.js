@@ -19,8 +19,8 @@ const play = {
     SET_PLAY_ATTENDANCE (state, players) {
       state.players = players
     },
-    SET_PLAY_CHOICES_SHOWN (state, shown) {
-      state.choicesShown = shown
+    SET_PLAY_QUESTIONS (state, questions) {
+      state.questions = questions
     },
     SET_PLAY_QUESTION_UPDATE (state, question) {
       for (let i = 0; i < state.questions.length; i++) {
@@ -29,11 +29,16 @@ const play = {
           break
         }
       }
+    },
+    SET_PLAY_CHOICES_SHOWN (state, shown) {
+      state.choicesShown = shown
     }
   },
   actions: {
     'clear-game': function ({ state, commit }) {
       commit('SET_PLAY_GAME', undefined)
+      commit('SET_PLAY_ATTENDANCE', [])
+      commit('SET_PLAY_CHOICES_SHOWN', 0)
       state.questions = []
       state.choicesShown = 0,
       state.players = []
@@ -48,7 +53,7 @@ const play = {
         response = await apiGames.getDetails({ game_id: params.game_id })
         commit('SET_PLAY_GAME', response.game)
         response = await apiGames.getQuestions({ game_id: params.game_id })
-        state.questions = response.questions
+        commit('SET_PLAY_QUESTIONS', response.questions)
         response = await apiGames.getPlayers({ game_id: params.game_id })
         commit('SET_PLAY_ATTENDANCE', response.players)
         router.push('/play')
@@ -61,7 +66,7 @@ const play = {
         })
       }
     },
-    'play-next-question': async function ({ state, commit }) {
+    'play-next-question': async function ({ state, commit, dispatch }) {
       for (let question of state.questions) {
         if (question.id > state.game.current_question_id) {
           try {
@@ -69,6 +74,7 @@ const play = {
               game_id: state.game.id,
               question_id: question.id
             })
+            dispatch('monitor-question', false)
             commit('SET_MONITOR_ANSWER', false)
             commit('SET_PLAY_CHOICES_SHOWN', 0)
             commit('SET_PLAY_GAME', response.game)
