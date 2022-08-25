@@ -70,20 +70,21 @@ export default {
     loopingRequest: null
   }),
   watch: {
-    question: function () {
-      if (this.loopingRequest != null) {
-        clearInterval(this.loopingRequest)
-      }
-      if (this.question.locked_at == null &&
-          this.currentGameQuestion.id == this.question.id) {
-        this.loopingRequest = setInterval(this.getAnswers, 1000)
-      } else {
+    question: function (n, o) {
+      if (o.id != n.id) {
         this.getAnswers()
       }
     }
   },
   methods: {
     getAnswers: function () {
+      if (this.loopingRequest != null) {
+        clearInterval(this.loopingRequest)
+      }
+      if (!this.question.locked_at) {
+        this.loopingRequest = setInterval(this.getAnswers, 1000)
+        console.log('looping')
+      }
       apiQuestions.getSubmittedAnswers({ question_id: this.question.id })
         .then(response => {
           this.answers = response.answers
@@ -104,6 +105,7 @@ export default {
         for (let answer of this.answers) {
           await apiAnswers.saveScore({ answer_id: answer.id, score: answer.score })
         }
+        this.$store.dispatch('play-refresh-scores')
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: 'Scores saved'

@@ -10,7 +10,8 @@ const play = {
     quest_types: [],
     questions: [],
     choicesShown: 0,
-    players: []
+    players: [],
+    scores: []
   },
   mutations: {
     SET_PLAY_GAME (state, game) {
@@ -22,26 +23,29 @@ const play = {
     SET_PLAY_QUESTIONS (state, questions) {
       state.questions = questions
     },
-    SET_PLAY_QUESTION_UPDATE (state, question) {
-      for (let i = 0; i < state.questions.length; i++) {
-        if (state.questions[i].id == question.id) {
-          state.questions[i] = question
+    SET_PLAY_QUESTION_LOCK (state, question) {
+      for (let quest of state.questions) {
+        if (quest.id == question.id) {
+          quest.locked_at = question.locked_at || undefined
           break
         }
       }
     },
     SET_PLAY_CHOICES_SHOWN (state, shown) {
       state.choicesShown = shown
-    }
+    },
+    SET_PLAY_SCORES (state, scores) {
+      state.scores = scores
+    },
   },
   actions: {
-    'clear-game': function ({ state, commit }) {
+    'clear-game': function ({ commit }) {
       commit('SET_PLAY_GAME', undefined)
       commit('SET_PLAY_ATTENDANCE', [])
       commit('SET_PLAY_CHOICES_SHOWN', 0)
-      state.questions = []
-      state.choicesShown = 0,
-      state.players = []
+      commit('SET_PLAY_QUESTIONS', [])
+      commit('SET_PLAY_ATTENDANCE', [])
+      commit('SET_PLAY_SCORES', [])
     },
     'play-game': async function ({ state, commit, dispatch }, params) {
       try {
@@ -96,6 +100,14 @@ const play = {
     },
     'play-reveal-answer': function ({ commit }) {
       commit('SET_MONITOR_ANSWER', true)
+    },
+    'play-refresh-scores': function ({ state, commit }) {
+      apiGames.getScores({ game_id: state.game.id })
+        .then(response => {
+          commit('SET_PLAY_SCORES', response.scores)
+        }).catch(err => {
+          console.log(err)
+        })
     }
   },
   getters: {
@@ -104,6 +116,9 @@ const play = {
     },
     getPlayAttendance: (state) => () => {
       return state.players
+    },
+    getPlayScores: (state) => () => {
+      return state.scores
     },
     getPlayLevels: (state) => () => {
       return state.levels

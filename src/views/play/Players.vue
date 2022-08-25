@@ -2,20 +2,19 @@
   <v-card>
 
     <v-card-title>
-      Players ({{ players.length }})
+      Players ({{ scores.length }})
     </v-card-title>
 
     <v-divider></v-divider>
 
     <v-data-table :headers="headers" :items="scores"
-      :loading="loadingScores"
       :items-per-page="-1"
       :hide-default-footer="true">
       <template v-slot:item.order="{ index }">
-        {{ index + 1 | formatOrdinal }}
+        {{ index + 1 }}<sup>{{ index + 1 | formatOrdinalOnly }}</sup>
       </template>
-      <template v-slot:item.score="{ item }">
-        {{ item.score || 0 }}
+      <template v-slot:item.name="{ item }">
+        {{ getPlayerName(item.player_id) }}
       </template>
     </v-data-table>
 
@@ -34,7 +33,6 @@
 
 <script>
 import Attendance from './Attendance'
-import apiGames from '@/api/games'
 
 export default {
   name: 'view-play-scores',
@@ -45,12 +43,11 @@ export default {
     game: function () {
       return this.$store.getters.getPlayGame()
     },
-    players: function () {
-      return this.$store.getters.getPlayAttendance()
+    scores: function () {
+      return this.$store.getters.getPlayScores()
     }
   },
   data: () => ({
-    loadingScores: false,
     headers: [
       {
         text: '#',
@@ -65,34 +62,21 @@ export default {
         value: 'score',
       }
     ],
-    scores: [],
-    answers: [],
     formAttendance: {
       show: false
     }
   }),
   mounted () {
-    this.getScores()
+    this.$store.dispatch('play-refresh-scores')
   },
   methods: {
-    getScores: function () {
-      this.loadingScores = true
-      apiGames.getScores({ game_id: this.game.id })
-        .then(response => {
-          this.scores = response.scores
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
-          this.loadingScores = false
-        })
-    },
-    getPlayerByID: function (player_id) {
-      for (let player of this.players) {
-        if (player.id == player_id) {
-          return player
+    getPlayerName: function (player_id) {
+      for (let player of this.$store.getters.getPlayAttendance()) {
+        if (player_id == player.id) {
+          return player.name
         }
       }
-      return { name: 'Player' }
+      return '-'
     }
   }
 }

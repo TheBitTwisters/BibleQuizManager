@@ -30,7 +30,6 @@ const session = {
     'session-login': function ({ commit, dispatch }, params) {
       commit('SET_SESSION', params.session)
       commit('SET_SESSION_MANAGER', params.manager)
-      commit('SET_GAMES', params.games)
       commit('SET_APP_DRAWER', true)
       dispatch('clear-game')
       router.push({ name: 'Dashboard' })

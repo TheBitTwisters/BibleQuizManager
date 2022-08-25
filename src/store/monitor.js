@@ -33,6 +33,8 @@ const monitor = {
         commit('SET_MONITOR_QUESTION', true)
       } else {
         commit('SET_MONITOR_QUESTION', false)
+        commit('SET_MONITOR_ANSWER', false)
+        commit('SET_PLAY_CHOICES_SHOWN', 0)
       }
       commit('SET_MONITOR_ANSWER', false)
     },

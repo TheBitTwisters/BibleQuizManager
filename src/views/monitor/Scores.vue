@@ -4,80 +4,48 @@
       {{ monitorGame ? 'Scores' : 'Total Scores' }}
     </v-card-title>
     <v-list>
-      <div v-for="(score, index) in topTenScores" :key="score.name">
-        <v-divider></v-divider>
-        <v-list-item>
-          <v-list-item-icon>
-            {{ index + 1 | formatOrdinal }}
-          </v-list-item-icon>
-          <v-list-item-content>
-            {{ score.name }}
-          </v-list-item-content>
-          <v-list-item-action>
-            {{ score.score || 0 }}
-          </v-list-item-action>
-        </v-list-item>
+      <div v-for="(score, index) in scores" :key="score.name">
+        <template v-if="index < 10">
+          <v-divider></v-divider>
+          <v-list-item>
+            <v-list-item-icon>
+              {{ index + 1 }}<sup>{{ index + 1 | formatOrdinalOnly }}</sup>
+            </v-list-item-icon>
+            <v-list-item-content>
+              {{ getPlayerName(score.player_id) }}
+            </v-list-item-content>
+            <v-list-item-action>
+              {{ score.score || 0 }}
+            </v-list-item-action>
+          </v-list-item>
+        </template>
       </div>
     </v-list>
   </v-card>
 </template>
 
 <script>
-import apiScores from '@/api/scores'
-import apiGames from '@/api/games'
-
 export default {
   name: 'view-monitor-scores',
   computed: {
     monitorGame: function () {
       return this.$store.state.monitor.game
     },
-    game: function () {
-      return this.$store.getters.getPlayGame()
-    },
-    topTenScores: function () {
-      var scores = []
-      for (let score of this.scores) {
-        if (scores.length == 10) {
-          break
-        }
-        scores.push(score)
-      }
-      return scores
+    scores: function () {
+      return this.$store.getters.getPlayScores()
     }
   },
-  data: () => ({
-    scores: []
-  }),
   mounted () {
-    this.getScores()
+    this.$store.dispatch('play-refresh-scores')
   },
   methods: {
-    getScores: async function () {
-      try {
-        var response = { scores: [] }
-        if (this.monitorGame && this.game.id > 0) {
-          response = await apiGames.getScores({ game_id: this.game.id })
-        } else {
-          response = await apiScores.getTotalScores()
-        }
-        this.scores = response.scores
-      } catch (err) {
-        console.error(err)
-      } finally {
-        var self = this
-        setTimeout(function () {
-          self.getScores()
-        }, 1000)
-      }
-    },
-    getPlayerByID: function (player_id) {
-      for (let player of this.$store.state.play.players) {
-        if (player.id == player_id) {
-          return player
+    getPlayerName: function (player_id) {
+      for (let player of this.$store.getters.getPlayAttendance()) {
+        if (player_id == player.id) {
+          return player.name
         }
       }
-      return { name: 'Player' }
+      return '-'
     }
   }
 }

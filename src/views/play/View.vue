@@ -1,21 +1,17 @@
 <template>
   <v-row>
-    <v-col md="3">
+    <v-col md="4">
       <Panel/>
-      <Monitor/>
-    </v-col>
-    <v-col md="6">
-      <Questions/>
-    </v-col>
-    <v-col md="3">
       <Players/>
+    </v-col>
+    <v-col md="8">
+      <Questions/>
     </v-col>
   </v-row>
 </template>
 
 <script>
 import Panel from './Panel'
-import Monitor from './Monitor'
 import Questions from './Questions'
 import Players from './Players'
 
@@ -23,7 +19,6 @@ export default {
   name: 'view-play',
   components: {
     Panel,
-    Monitor,
     Questions,
     Players
   },

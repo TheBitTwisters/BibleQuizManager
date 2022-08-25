@@ -2,11 +2,9 @@
   <div id="biblequiz-monitor-question" class="d-flex flex-column fill-height white--text">
 
     <div class="black d-flex align-center mb-3 pa-3" style="height: 10%; font-size: 4vh;">
-      <span>Question #{{question.order}}</span>
+      <span>Question #{{question.order}} {{level.name}}</span>
       <v-spacer></v-spacer>
-      <span>{{level.name}} | {{questType.name}}</span>
-      <v-spacer></v-spacer>
-      <span>{{question.score}} PTS</span>
+      <span>{{questType.name}}: {{question.score}} PTS</span>
     </div>
 
     <div class="teal d-flex align-center justify-center pa-3 text-center" :style="{ fontSize: '9vh', lineHeight: '10vh', height: questionHeight }">
@@ -24,7 +22,7 @@
           :style="{
             flex: '1 0 calc(50% - 8px - 8px)',
             maxWidth: 'calc(50% - 8px - 8px)',
-            maxHeight: '50%',
+            maxHeight: isMultipleChoice ? '50%' : 'auto',
             justifyContent: isMultipleChoice ? 'start' : 'center',
             backgroundColor: showAnswer && choice.is_answer == 1 ? 'lime !important' : 'white'
           }"
@@ -102,18 +100,18 @@ export default {
         return '55%'
       }
       if (this.isTrueOrFalse) {
-        return '70%'
+        return '75%'
       }
-      return '75%'
+      return '70%'
     },
     choicesHeight: function () {
       if (this.isMultipleChoice) {
         return '35%'
       }
       if (this.isTrueOrFalse) {
-        return '20%'
+        return '15%'
       }
-      return '15%'
+      return '20%'
     },
     showAnswer: function () {
       return this.$store.state.monitor.answer
