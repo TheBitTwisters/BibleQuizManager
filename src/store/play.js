@@ -2,6 +2,7 @@ import router from '@/router'
 import apiGames from '@/api/games'
 import apiLevels from '@/api/levels'
 import apiQuestTypes from '@/api/quest_types'
+import apiScores from '@/api/scores'
 
 const play = {
   state: {
@@ -108,6 +109,32 @@ const play = {
         }).catch(err => {
           console.log(err)
         })
+    },
+    'play-finish-game': async function ({ state, commit }, params) {
+      try {
+        for (let group of params.groups) {
+          await apiScores.setGroupGameScore({
+            game_id: state.game.id,
+            group_id: group.id,
+            score: group.score
+          })
+        }
+        var response = await apiGames.setCurrentQuestion({
+          game_id: state.game.id,
+          question_id: -1
+        })
+        commit('SET_PLAY_GAME', response.game)
+        commit('SHOW_SNACKBAR', {
+          status: 'success',
+          message: 'Gamescores saved'
+        })
+      } catch (err) {
+        console.log(err)
+        commit('SHOW_SNACKBAR', {
+          status: 'error',
+          message: 'Error saving gamescores'
+        })
+      }
     }
   },
   getters: {

@@ -11,7 +11,9 @@
       {{ question.question }}
     </div>
     <div class="black--text pa-1 d-flex align-center justify-center" style="height: 5%; font-size: 3vh">
-      Reference: {{question.reference}}
+      <span class="font-italic mx-3">Reference</span>
+      <v-icon>mdi-arrow-right</v-icon>
+      <span class="font-weight-bold mx-3">{{question.reference}}</span>
     </div>
 
     <div v-if="isMultipleChoice || isTrueOrFalse"
