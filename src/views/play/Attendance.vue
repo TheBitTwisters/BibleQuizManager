@@ -22,7 +22,8 @@
               <v-radio label="Individual" value="individual"></v-radio>
             </v-radio-group>
             <v-select :items="playersSelection" label="Select group"
-              v-model="form.data.player_id" :item-text="form.data.type == 'group' ? 'name':'fullname'" item-value="id"
+              v-model="form.data.player_id" @change="groupSelected"
+              :item-text="form.data.type == 'group' ? 'name':'fullname'" item-value="id"
               outlined required dense>
             </v-select>
             <v-text-field label="Display name"
@@ -136,6 +137,26 @@ export default {
               message: err.message
             })
           })
+      }
+    },
+    groupSelected: function () {
+      switch (this.form.data.type) {
+        case 'group':
+          for (let group of this.groups) {
+            if (group.id == this.form.data.player_id) {
+              this.form.data.name = group.name
+              this.form.data.pass = group.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+            }
+          }
+          break
+        case 'individual':
+          for (let member of this.members) {
+            if (member.id == this.form.data.player_id) {
+              this.form.data.name = member.fullname
+              this.form.data.pass = member.fullname.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+            }
+          }
+          break
       }
     }
   }

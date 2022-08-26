@@ -119,6 +119,9 @@ const play = {
             score: group.score
           })
         }
+        await apiGames.modifyPlayersPass({
+          game_id: state.game.id
+        })
         var response = await apiGames.setCurrentQuestion({
           game_id: state.game.id,
           question_id: -1

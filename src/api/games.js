@@ -76,6 +76,24 @@ const getPlayers = (params) => {
     })
   })
 }
+const modifyPlayersPass = (params) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'post',
+      url: `/games/${params.game_id}/players/modify`,
+      headers: {
+        'Authorization': store.getters.getSessionToken()
+      }
+    }).then(response => {
+      resolve(response.data)
+    }).catch(err => {
+      if (err.response.data) {
+        reject(err.response.data)
+      }
+      reject(err)
+    })
+  })
+}
 
 const getScores = (params) => {
   return new Promise((resolve, reject) => {
@@ -187,6 +205,7 @@ export default {
   getDetails,
   getQuestions,
   getPlayers,
+  modifyPlayersPass,
   getScores,
   setCurrentQuestion,
   addPlayer,

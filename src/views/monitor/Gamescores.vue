@@ -27,7 +27,7 @@
       <v-list class="d-flex flex-column justify-space-between fill-height py-0" style="background: black;">
         <div v-for="(score, index) in scores" :key="score.name">
           <template v-if="index < 10">
-            <v-list-item class="px-3 white" :class="getChipColor(index)">
+            <v-list-item class="px-3 white" :class="getRankColor(index)">
               <v-list-item-icon>
                 <v-chip outlined
                   class="align-center justify-center font-weight-black"
@@ -74,7 +74,7 @@ export default {
       }
       return '-'
     },
-    getChipColor: function (index) {
+    getRankColor: function (index) {
       if (index == 0)
         return 'amber'
       else if (index == 1)
