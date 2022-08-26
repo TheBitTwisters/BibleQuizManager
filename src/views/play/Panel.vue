@@ -144,6 +144,7 @@ export default {
     },
     submitFinalScore: function () {
       this.$store.dispatch('play-finish-game', { groups: this.finalScore })
+      this.formFinalScore.show = false
     }
   }
 }
