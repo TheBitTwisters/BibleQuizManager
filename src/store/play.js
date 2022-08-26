@@ -119,9 +119,17 @@ const play = {
             score: group.score
           })
         }
+      } catch (err) {
+        console.log(err)
+      }
+      try {
         await apiGames.modifyPlayersPass({
           game_id: state.game.id
         })
+      } catch (err) {
+        console.log(err)
+      }
+      try {
         var response = await apiGames.setCurrentQuestion({
           game_id: state.game.id,
           question_id: -1
@@ -133,10 +141,6 @@ const play = {
         })
       } catch (err) {
         console.log(err)
-        commit('SHOW_SNACKBAR', {
-          status: 'error',
-          message: 'Error saving gamescores'
-        })
       }
     }
   },

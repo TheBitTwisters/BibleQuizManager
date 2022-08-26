@@ -17,17 +17,21 @@
       <v-list class="d-flex flex-column justify-space-between fill-height py-0" style="background: black;">
         <div v-for="(score, index) in topTenScores" :key="score.name">
           <v-list-item class="px-3 white" :class="getRankColor(index)">
-            <v-list-item-icon>
+            <v-list-item-icon class="my-2">
               <v-chip outlined
                 class="align-center justify-center font-weight-black"
-                style="height: 50px; min-width: 85px; font-size: 3vh;">
+                style="height: 50px; min-width: 85px; font-size: 4vh;">
                 {{ index + 1 }}<sup>{{ index + 1 | formatOrdinalOnly }}</sup>
               </v-chip>
             </v-list-item-icon>
-            <v-list-item-content class="py-0 font-weight-bold" style="font-size: 4vh;">
+            <v-list-item-content
+              class="py-0 font-weight-bold"
+              style="font-size: 5vh; line-height: 1.1;">
               {{ score.name }}
             </v-list-item-content>
-            <v-list-item-action class="align-center my-1 mr-0 justify-end font-weight-black" style="min-width: 64px; font-size: 4.5vh;">
+            <v-list-item-action
+              class="align-center my-1 mr-0 justify-end font-weight-black"
+              style="min-width: 64px; font-size: 7vh; line-height: 1;">
               {{ score.score || 0 }}
             </v-list-item-action>
           </v-list-item>
