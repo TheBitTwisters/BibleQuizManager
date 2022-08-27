@@ -10,6 +10,13 @@
           San Juan de Valdez SDA Church
         </div>
       </div>
+      <v-card>
+        <v-card-title style="font-size: 5vh; line-height: 1.5;">
+          WIFI: BibleQuiz
+          <br>
+          @browser: http://192.168.11.11
+        </v-card-title>
+      </v-card>
 
     </v-col>
     <v-col md="6" class="fill-height black">
