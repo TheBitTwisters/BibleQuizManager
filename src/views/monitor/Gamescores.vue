@@ -38,7 +38,7 @@
               <v-list-item-content
                 class="py-0 font-weight-bold"
                 style="font-size: 5vh; line-height: 1.1;">
-                {{ getPlayerName(score.player_id) }}
+                {{ score.name }}
               </v-list-item-content>
               <v-list-item-action
                 class="align-center my-1 mr-0 justify-end font-weight-black"

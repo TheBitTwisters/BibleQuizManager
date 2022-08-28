@@ -13,9 +13,6 @@
       <template v-slot:item.order="{ index }">
         {{ index + 1 }}<sup>{{ index + 1 | formatOrdinalOnly }}</sup>
       </template>
-      <template v-slot:item.name="{ item }">
-        {{ getPlayerName(item.player_id) }}
-      </template>
     </v-data-table>
 
     <v-divider></v-divider>
