@@ -10,7 +10,7 @@
     <div class="teal d-flex align-center justify-center pa-3 text-center font-weight-black" :style="{ fontSize: '8vh', lineHeight: '10vh', height: questionHeight }">
       {{ question.question }}
     </div>
-    <div class="black--text pa-1 d-flex align-center justify-center" style="height: 5%; font-size: 3vh">
+    <div v-if="showAnswer" class="black--text pa-1 d-flex align-center justify-center" style="height: 5%; font-size: 3vh">
       <span class="font-italic mx-3">Reference</span>
       <v-icon>mdi-arrow-right</v-icon>
       <span class="font-weight-bold mx-3">{{question.reference}}</span>
