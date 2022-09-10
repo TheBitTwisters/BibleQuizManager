@@ -33,6 +33,7 @@
             <v-card-text>
               <v-row>
                 <v-col md="8">
+                  Reference: {{quest.reference}}
                   <div class="text-h4">
                     {{ quest.question }}
                   </div>
