@@ -17,15 +17,19 @@
       </v-btn>
     </v-card-title>
 
-    <v-data-table :headers="headers" :items="answers"
+    <v-data-table :headers="headers" :items="players"
       :loading="savingScores"
       :items-per-page="-1"
       :hide-default-footer="true">
-      <template v-slot:item.name="{ item }">
-        {{ getPlayerByID(item.attendance_id).name }}
+      <template v-slot:item.answer="{ item }">
+        {{ getPlayerAnswer(item.id) }}
       </template>
       <template v-slot:item.score="{ item }">
-        <v-text-field v-model="item.score" hide-details></v-text-field>
+        <v-text-field
+          :value="getPlayerScore(item.id)"
+          @change="setPlayerScore(item.id, $event)"
+          hide-details>
+        </v-text-field>
       </template>
     </v-data-table>
 
@@ -44,6 +48,9 @@ export default {
     }
   },
   computed: {
+    players: function () {
+      return this.$store.getters.getPlayAttendance()
+    },
     currentGameQuestion: function () {
       return this.$store.getters.getPlayCurrentQuestion()
     }
@@ -120,13 +127,29 @@ export default {
         this.savingScores = false
       }
     },
-    getPlayerByID: function (player_id) {
-      for (let player of this.$store.getters.getPlayAttendance()) {
-        if (player.id == player_id) {
-          return player
+    getPlayerAnswer: function (player_id) {
+      for (let answer of this.answers) {
+        if (answer.attendance_id == player_id) {
+          return answer.answer
         }
       }
-      return { name: 'Player' }
+      return ''
+    },
+    getPlayerScore: function (player_id) {
+      for (let answer of this.answers) {
+        if (answer.attendance_id == player_id) {
+          return answer.score
+        }
+      }
+      return 0
+    },
+    setPlayerScore: function (player_id, score) {
+      for (let answer of this.answers) {
+        if (answer.attendance_id == player_id) {
+          answer.score = score
+        }
+      }
+      return 0
     }
   }
 }
