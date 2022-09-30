@@ -1,7 +1,8 @@
 <template>
   <div id="biblequiz-monitor" class="fill-height" style="width: 100%;">
 
-    <Question v-if="showQuestion"/>
+    <PlayerAnswers v-if="showPlayerAnswers"/>
+    <Question v-else-if="showQuestion"/>
     <Gamescores v-else-if="showGame"/>
     <Totalscores v-else/>
 
@@ -12,13 +13,15 @@
 import Question from './Question'
 import Gamescores from './Gamescores'
 import Totalscores from './Totalscores'
+import PlayerAnswers from './PlayerAnswers'
 
 export default {
   name: 'view-monitor',
   components: {
     Question,
     Gamescores,
-    Totalscores
+    Totalscores,
+    PlayerAnswers
   },
   computed: {
     showGame: function () {
@@ -26,6 +29,9 @@ export default {
     },
     showQuestion: function () {
       return this.$store.state.monitor.question
+    },
+    showPlayerAnswers: function () {
+      return this.$store.state.monitor.playerAnswers
     }
   }
 }

@@ -6,6 +6,11 @@
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
       Answers <span>({{answers.length}})</span>
+      <v-btn text :disabled="!question.locked_at"
+        @click="toggleMonitorPlayerAnswers">
+        <span v-if="!monitorPlayerAnswers">Show</span>
+        <span v-else>Hide</span>
+      </v-btn>
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <v-btn icon @click="checkAnswers">
@@ -53,6 +58,9 @@ export default {
     },
     currentGameQuestion: function () {
       return this.$store.getters.getPlayCurrentQuestion()
+    },
+    monitorPlayerAnswers: function () {
+      return this.$store.state.monitor.playerAnswers
     }
   },
   data: () => ({
@@ -150,7 +158,10 @@ export default {
         }
       }
       return 0
-    }
+    },
+    toggleMonitorPlayerAnswers: function () {
+      this.$store.dispatch('monitor-player-answers', !this.monitorPlayerAnswers)
+    },
   }
 }
 </script>

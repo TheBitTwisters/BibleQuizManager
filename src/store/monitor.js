@@ -2,7 +2,8 @@ const monitor = {
   state: {
     game: false,
     question: false,
-    answer: false
+    answer: false,
+    playerAnswers: false
   },
   mutations: {
     SET_MONITOR_GAME (state, on) {
@@ -13,6 +14,9 @@ const monitor = {
     },
     SET_MONITOR_ANSWER (state, on) {
       state.answer = on
+    },
+    SET_MONITOR_PLAYER_ANSWERS (state, on) {
+      state.playerAnswers = on
     }
   },
   actions: {
@@ -26,6 +30,7 @@ const monitor = {
       }
       commit('SET_MONITOR_QUESTION', false)
       commit('SET_MONITOR_ANSWER', false)
+      commit('SET_MONITOR_PLAYER_ANSWERS', false)
     },
     'monitor-question': ({ commit, getters }, on) => {
       if (on && getters.hasPlayGame() && getters.hasPlayCurrentQuestion()) {
@@ -37,9 +42,13 @@ const monitor = {
         commit('SET_PLAY_CHOICES_SHOWN', 0)
       }
       commit('SET_MONITOR_ANSWER', false)
+      commit('SET_MONITOR_PLAYER_ANSWERS', false)
     },
     'monitor-answer': ({ commit }, on) => {
       commit('SET_MONITOR_ANSWER', on)
+    },
+    'monitor-player-answers': ({ commit }, on) => {
+      commit('SET_MONITOR_PLAYER_ANSWERS', on)
     }
   }
 }
