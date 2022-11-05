@@ -43,7 +43,7 @@
               <v-list-item-action
                 class="align-center my-1 mr-0 justify-end font-weight-black"
                 style="min-width: 64px; font-size: 7vh; line-height: 1;">
-                {{ score.score || 0 }}
+                {{ score.score || 0 | numeric }}
               </v-list-item-action>
             </v-list-item>
             <v-divider v-if="index < 9" style="border-width: medium; border-color: black;"></v-divider>

@@ -6,6 +6,7 @@ import vuetify from './plugins/vuetify'
 
 import '@/filters/datetime'
 import '@/filters/ordinal'
+import '@/filters/numeric'
 
 Vue.config.productionTip = false
 
