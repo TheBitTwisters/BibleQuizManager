@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import apiAuth from '@/api/auth'
-
 export default {
   name: 'view-auth-login',
   data: () => ({
@@ -47,7 +45,8 @@ export default {
     login: function () {
       this.form.submitting = true
       this.form.message = ''
-      apiAuth.login(this.form.data)
+      console.log(this.$api)
+      this.$api.auth.login(this.form.data.name, this.form.data.pin)
         .then(data => {
           this.$store.commit('SHOW_SNACKBAR', {
             status: 'success',
