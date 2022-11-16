@@ -42,9 +42,6 @@
 </template>
 
 <script>
-import apiQuestions from '@/api/questions'
-import apiAnswers from '@/api/answers'
-
 export default {
   name: 'view-play-answers',
   props: {
@@ -100,7 +97,7 @@ export default {
         this.loopingRequest = setInterval(this.getAnswers, 1000)
         console.log('looping')
       }
-      apiQuestions.getSubmittedAnswers({ question_id: this.question.id })
+      this.$api.question.getSubmittedAnswers(this.question.id)
         .then(response => {
           this.answers = response.answers
         }).catch(err => {
@@ -118,7 +115,7 @@ export default {
       this.savingScores = true
       try {
         for (let answer of this.answers) {
-          await apiAnswers.saveScore({ answer_id: answer.id, score: answer.score })
+          await this.$api.answer.saveScore(answer.id, answer.score)
         }
         this.$store.dispatch('play-refresh-scores')
         this.$store.commit('SHOW_SNACKBAR', {
