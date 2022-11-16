@@ -1,13 +1,17 @@
+import store from '@/store'
+
 export default axios => ({
 
-  login (name, pin) {
+  saveScore (answer_id, score) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'post',
-        url: '/auth/manager',
+        url: `/answers/${answer_id}/score`,
         data: {
-          name: name,
-          pin: pin
+          score: score
+        },
+        headers: {
+          'Authorization': store.getters.getSessionToken()
         }
       }).then(response => {
         resolve(response.data)
