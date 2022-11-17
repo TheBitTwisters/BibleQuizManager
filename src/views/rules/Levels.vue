@@ -55,8 +55,6 @@
 </template>
 
 <script>
-import apiLevels from '@/api/levels'
-
 export default {
   name: 'view-rules-levels',
   data: () => ({
@@ -94,7 +92,7 @@ export default {
   methods: {
     getLevels: function () {
       this.loadingItems = true
-      apiLevels.getAll()
+      this.$api.level.getAll()
         .then(response => {
           this.levels = response.levels
         }).catch(err => {
@@ -126,16 +124,7 @@ export default {
     saveLevel: async function () {
       this.form.submitting = true
       try {
-        var response = {}
-        if (this.form.data.id > 0) {
-          response = await apiLevels.update({
-            level_id: this.form.data.id,
-            name: this.form.data.name,
-            score: this.form.data.score
-          })
-        } else {
-          response = await apiLevels.create(this.form.data)
-        }
+        var response = await apiLevels.create(this.form.data)
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: response.message

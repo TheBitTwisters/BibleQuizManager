@@ -48,9 +48,6 @@
 </template>
 
 <script>
-import apiGames from '@/api/games'
-import apiPlayers from '@/api/players'
-
 export default {
   name: 'view-play-attendance',
   computed: {
@@ -101,7 +98,7 @@ export default {
   methods: {
     getPlayers: function () {
       this.loadingPlayers = true
-      apiPlayers.getAll()
+      this.$api.player.getAll()
         .then(response => {
           this.groups = response.groups
           this.members = response.members
@@ -114,7 +111,7 @@ export default {
     addPlayer: function () {
       if (this.form.data.player_id > 0) {
         this.form.data.game_id = this.game.id
-        apiGames.addPlayer(this.form.data)
+        this.$api.game.addPlayer(this.form.data)
         .then(response => {
             if (!response.err) {
               this.form.data = {

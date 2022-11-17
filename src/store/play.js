@@ -1,8 +1,5 @@
+import Vue from 'vue'
 import router from '@/router'
-import apiGames from '@/api/games'
-import apiLevels from '@/api/levels'
-import apiQuestTypes from '@/api/quest_types'
-import apiScores from '@/api/scores'
 
 const play = {
   state: {
@@ -51,15 +48,15 @@ const play = {
     'play-game': async function ({ state, commit, dispatch }, params) {
       try {
         var response = {}
-        response = await apiLevels.getAll()
+        response = await Vue.$api.level.getAll()
         state.levels = response.levels
-        response = await apiQuestTypes.getAll()
+        response = await Vue.$api.questType.getAll()
         state.quest_types = response.quest_types
-        response = await apiGames.getDetails({ game_id: params.game_id })
+        response = await Vue.$api.game.getDetails(params.game_id)
         commit('SET_PLAY_GAME', response.game)
-        response = await apiGames.getQuestions({ game_id: params.game_id })
+        response = await Vue.$api.question.getQuestions(params.game_id)
         commit('SET_PLAY_QUESTIONS', response.questions)
-        response = await apiGames.getPlayers({ game_id: params.game_id })
+        response = await Vue.$api.getPlayers(params.game_id)
         commit('SET_PLAY_ATTENDANCE', response.players)
         router.push('/play')
       } catch (err) {
@@ -75,10 +72,10 @@ const play = {
       for (let question of state.questions) {
         if (question.id > state.game.current_question_id) {
           try {
-            var response = await apiGames.setCurrentQuestion({
-              game_id: state.game.id,
-              question_id: question.id
-            })
+            var response = await Vue.$api.game.setCurrentQuestion(
+              state.game.id,
+              question.id
+            )
             dispatch('monitor-question', false)
             commit('SET_MONITOR_ANSWER', false)
             commit('SET_PLAY_CHOICES_SHOWN', 0)
@@ -103,7 +100,7 @@ const play = {
       commit('SET_MONITOR_ANSWER', true)
     },
     'play-refresh-scores': function ({ state, commit }) {
-      apiGames.getScores({ game_id: state.game.id })
+      Vue.$api.game.getScores(state.game.id)
         .then(response => {
           commit('SET_PLAY_SCORES', response.scores)
         }).catch(err => {
@@ -113,27 +110,22 @@ const play = {
     'play-finish-game': async function ({ state, commit }, params) {
       try {
         for (let group of params.groups) {
-          await apiScores.setGroupGameScore({
-            game_id: state.game.id,
-            group_id: group.id,
-            score: group.score
-          })
+          await Vue.$api.score.setGroupGameScore(
+            state.game.id,
+            group.id,
+            group.score
+          )
         }
       } catch (err) {
         console.log(err)
       }
       try {
-        await apiGames.modifyPlayersPass({
-          game_id: state.game.id
-        })
+        await Vue.$api.game.updateGamePass(state.game.id)
       } catch (err) {
         console.log(err)
       }
       try {
-        var response = await apiGames.setCurrentQuestion({
-          game_id: state.game.id,
-          question_id: -1
-        })
+        var response = await Vue.$api.game.setCurrentQuestion(state.game.id, -1)
         commit('SET_PLAY_GAME', response.game)
         commit('SHOW_SNACKBAR', {
           status: 'success',

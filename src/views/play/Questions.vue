@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import apiQuestions from '@/api/questions'
 import Answers from './Answers'
 
 export default {
@@ -187,7 +186,7 @@ export default {
       this.$store.dispatch('play-choice-show')
     },
     lockQuestion: function () {
-      apiQuestions.lock({ question_id: this.currentViewingQuestion.id })
+      this.$api.question.lock(this.currentViewingQuestion.id)
         .then(data => {
           this.$store.commit('SET_PLAY_QUESTION_LOCK', data.question)
         })
