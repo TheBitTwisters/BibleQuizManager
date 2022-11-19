@@ -68,6 +68,7 @@
 
 <script>
 import moment from 'moment'
+import apiGames from '@/api/games'
 
 export default {
   name: 'view-games-list',
@@ -106,7 +107,7 @@ export default {
   methods: {
     getGames: function () {
       this.loadingItems = true
-      this.$api.games.getAll()
+      apiGames.getAll()
         .then(response => {
           this.games = response.games
         }).catch(err => {
@@ -139,7 +140,18 @@ export default {
     saveGame: async function () {
       this.form.submitting = true
       try {
-        var response = await this.$api.games.update(this.form.data)
+        var response = {}
+        if (this.form.data.id > 0) {
+          response = await apiGames.update({
+            game_id: this.form.data.id,
+            game: {
+              title: this.form.data.title,
+              date: this.form.data.date
+            }
+          })
+        } else {
+          response = await apiGames.create(this.form.data)
+        }
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: response.message
