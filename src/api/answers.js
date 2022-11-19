@@ -1,13 +1,16 @@
 import axios from '@/plugins/axios'
+import store from '@/store'
 
-const login = (params) => {
+const saveScore = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
-      url: '/auth/manager',
+      url: `/answers/${params.answer_id}/score`,
       data: {
-        name: params.name,
-        pin: params.pin
+        score: params.score
+      },
+      headers: {
+        'Authorization': store.getters.getSessionToken()
       }
     }).then(response => {
       resolve(response.data)
@@ -21,5 +24,5 @@ const login = (params) => {
 }
 
 export default {
-  login
+  saveScore
 }
