@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import apiScores from '@/api/scores'
+
 export default {
   name: 'view-monitor-totalscores',
   computed: {
@@ -73,7 +75,7 @@ export default {
   },
   methods: {
     getScores: async function () {
-      this.$api.score.getTotalScores()
+      apiScores.getTotalScores()
         .then(data => {
           this.scores = data.scores
         }).catch(err => {

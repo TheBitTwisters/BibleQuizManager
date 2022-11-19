@@ -134,6 +134,12 @@
 </template>
 
 <script>
+import apiLevels from '@/api/levels'
+import apiQuestTypes from '@/api/quest_types'
+import apiGames from '@/api/games'
+import apiQuestions from '@/api/questions'
+import apiChoices from '@/api/choices'
+
 export default {
   name: 'view-questions-list',
   props: {
@@ -213,13 +219,13 @@ export default {
       this.loadingItems = true
       try {
         var response = {}
-        response = await this.$api.game.getDetails(this.game_id)
+        response = await apiGames.getDetails({ game_id: this.game_id })
         this.game = response.game
-        response = await this.$api.level.getAll()
+        response = await apiLevels.getAll()
         this.levels = response.levels
-        response = await this.$api.questType.getAll()
+        response = await apiQuestTypes.getAll()
         this.quest_types = response.quest_types
-        response = await this.$api.game.getQuestions(this.game_id)
+        response = await apiGames.getQuestions({ game_id: this.game_id })
         this.questions = response.questions
       } catch (err) {
         console.error(err)
@@ -304,9 +310,18 @@ export default {
       try {
         var response = {}
         if (this.form.data.id > 0) {
-          response = await this.$api.question.update(this.form.data)
+          response = await apiQuestions.update({
+            question_id: this.form.data.id,
+            level_id: this.form.data.level_id,
+            type_id: this.form.data.type_id,
+            order: this.form.data.order,
+            question: this.form.data.question,
+            reference: this.form.data.reference,
+            layout: this.form.data.layout,
+            score: this.form.data.score
+          })
         } else {
-          response = await this.$api.question.create(this.form.data)
+          response = await apiQuestions.create(this.form.data)
         }
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
@@ -340,11 +355,16 @@ export default {
         try {
           var response = {}
           if (choice.id > 0) {
-            response = await this.$api.choice.update(choice)
+            response = await apiChoices.update({
+              choice_id: choice.id,
+              label: choice.label,
+              value: choice.value,
+              is_answer: this.form.model.answer == choice.label ? 1 : 0
+            })
           } else {
             choice.question_id = this.form.data.id
             choice.is_answer = this.form.model.answer == choice.label ? 1 : 0
-            response = await this.$api.choice.create(choice)
+            response = await apiChoices.create(choice)
           }
           this.$store.commit('SHOW_SNACKBAR', {
             status: 'success',
@@ -361,7 +381,7 @@ export default {
       }
     },
     deleteChoice: async function (choice_id) {
-      var response = await this.$api.choice.deleteChoice({ choice_id: choice_id })
+      var response = await apiChoices.deleteChoice({ choice_id: choice_id })
       if (!response.err) {
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',

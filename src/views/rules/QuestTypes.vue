@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import apiQuestTypes from '@/api/quest_types'
+
 export default {
   name: 'view-quest_types-list',
   data: () => ({
@@ -92,7 +94,7 @@ export default {
   methods: {
     getQuestTypes: function () {
       this.loadingItems = true
-      this.$api.questType.getAll()
+      apiQuestTypes.getAll()
         .then(response => {
           this.quest_types = response.quest_types
         }).catch(err => {
@@ -114,13 +116,26 @@ export default {
     editQuestType: function (quest_type) {
       this.form.submitting = false
       this.form.success = false
-      this.form.data = quest_type
+      this.form.data = {
+        id: quest_type.id,
+        name: quest_type.name,
+        choices_count: quest_type.choices_count
+      }
       this.form.show = true
     },
     saveQuestType: async function () {
       this.form.submitting = true
       try {
-        var response = await this.$api.questType.create(this.form.data)
+        var response = {}
+        if (this.form.data.id > 0) {
+          response = await apiQuestTypes.update({
+            type_id: this.form.data.id,
+            name: this.form.data.name,
+            score: this.form.data.score
+          })
+        } else {
+          response = await apiQuestTypes.create(this.form.data)
+        }
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
           message: response.message

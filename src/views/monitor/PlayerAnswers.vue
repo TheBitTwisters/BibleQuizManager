@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import apiQuestions from '@/api/questions'
+
 export default {
   name: 'view-monitor-players-answers',
   computed: {
@@ -37,7 +39,7 @@ export default {
   },
   methods: {
     getAnswers: function () {
-      this.$api.question.getSubmittedAnswers(this.question.id)
+      apiQuestions.getSubmittedAnswers({ question_id: this.question.id })
         .then(response => {
           this.answers = response.answers
         }).catch(err => {

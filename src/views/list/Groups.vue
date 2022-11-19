@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import apiPlayers from '@/api/players'
+
 export default {
   name: 'view-groups-list',
   data: () => ({
@@ -100,7 +102,7 @@ export default {
   methods: {
     getGroups: function () {
       this.loadingItems = true
-      this.$api.player.getGroups()
+      apiPlayers.getGroups()
         .then(response => {
           this.groups = response.groups
         }).catch(err => {
@@ -121,7 +123,10 @@ export default {
     editGroup: function (group) {
       this.form.submitting = false
       this.form.success = false
-      this.form.data = group
+      this.form.data = {
+        id: group.id,
+        name: group.name
+      }
       this.form.show = true
     },
     saveGroup: async function () {
@@ -129,9 +134,12 @@ export default {
       try {
         var response = {}
         if (this.form.data.id > 0) {
-          response = await this.$api.player.updateGroup(this.form.data)
+          response = await apiPlayers.updateGroup({
+            id: this.form.data.id,
+            name: this.form.data.name
+          })
         } else {
-          response = await this.$api.player.createGroup(this.form.data)
+          response = await apiPlayers.createGroup(this.form.data)
         }
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',

@@ -98,6 +98,8 @@
 </template>
 
 <script>
+import apiPlayers from '@/api/players'
+
 export default {
   name: 'view-members-list',
   data: () => ({
@@ -160,10 +162,10 @@ export default {
   methods: {
     getMembers: function () {
       this.loadingItems = true
-      this.$api.player.getGroups()
+      apiPlayers.getGroups()
         .then(response => {
           this.groups = response.groups
-          this.$api.player.getAll()
+          apiPlayers.getAll()
             .then(response => {
               this.members = response.members
             })
@@ -186,7 +188,11 @@ export default {
     editMember: function (member) {
       this.form.submitting = false
       this.form.success = false
-      this.form.data = member
+      this.form.data = {
+        id: member.id,
+        last_name: member.last_name,
+        first_name: member.first_name
+      }
       this.form.show = true
     },
     saveMember: async function () {
@@ -194,9 +200,13 @@ export default {
       try {
         var response = {}
         if (this.form.data.id > 0) {
-          response = await this.$api.player.updateMember(this.form.data)
+          response = await apiPlayers.updateMember({
+            member_id: this.form.data.id,
+            last_name: this.form.data.last_name,
+            first_name: this.form.data.first_name
+          })
         } else {
-          response = await this.$api.player.createMember(this.form.data)
+          response = await apiPlayers.createMember(this.form.data)
         }
         this.$store.commit('SHOW_SNACKBAR', {
           status: 'success',
@@ -230,10 +240,10 @@ export default {
     },
     saveMemberGroup: function () {
       this.formGroup.submitting = true
-      this.$api.player.setMemberGroup(
-        this.formGroup.data.id,
-        this.formGroup.data.group_id
-      ).then(response => {
+      apiPlayers.setMemberGroup({
+        member_id: this.formGroup.data.id,
+        group_id: this.formGroup.data.group_id
+      }).then(response => {
           this.formGroup.data = response.member
           if (!response.err) {
             this.$store.commit('SHOW_SNACKBAR', {

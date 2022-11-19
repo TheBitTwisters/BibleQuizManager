@@ -78,7 +78,7 @@ export default axios => ({
     })
   },
 
-  updateGamePass (game_id) {
+  modifyPlayersPass (game_id) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'post',
