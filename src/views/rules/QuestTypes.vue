@@ -116,11 +116,7 @@ export default {
     editQuestType: function (quest_type) {
       this.form.submitting = false
       this.form.success = false
-      this.form.data = {
-        id: quest_type.id,
-        name: quest_type.name,
-        choices_count: quest_type.choices_count
-      }
+      this.form.data = quest_type
       this.form.show = true
     },
     saveQuestType: async function () {
@@ -128,11 +124,7 @@ export default {
       try {
         var response = {}
         if (this.form.data.id > 0) {
-          response = await apiQuestTypes.update({
-            type_id: this.form.data.id,
-            name: this.form.data.name,
-            score: this.form.data.score
-          })
+          response = await apiQuestTypes.update(this.form.data)
         } else {
           response = await apiQuestTypes.create(this.form.data)
         }
@@ -140,7 +132,7 @@ export default {
           status: 'success',
           message: response.message
         })
-        this.form.data.id = response.level.id
+        this.form.data.id = response.quest_type.id
         if (!response.err) {
           this.form.show = false
           this.getQuestTypes()

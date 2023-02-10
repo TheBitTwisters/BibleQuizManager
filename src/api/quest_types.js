@@ -46,7 +46,7 @@ const update = (params) => {
   return new Promise((resolve, reject) => {
     axios({
       method: 'put',
-      url: `/quest-types/${params.type_id}`,
+      url: `/quest-types/${params.id}`,
       data: {
         quest_type: params
       },

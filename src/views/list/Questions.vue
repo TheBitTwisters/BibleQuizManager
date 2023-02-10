@@ -19,6 +19,10 @@
             :loading="loadingItems"
             :items-per-page="-1"
             :hide-default-footer="true">
+            <template v-slot:item.passplay="{ item }">
+              <v-checkbox :value="item.passplay" dense readonly hide-details>
+              </v-checkbox>
+            </template>
             <template v-slot:item.level_id="{ item }">
               {{ getLevelByID(item.level_id) }}
             </template>
@@ -55,14 +59,21 @@
             <v-form v-model="form.valid" @submit.prevent="saveQuestion">
 
               <v-row>
-                <v-col cols="6" sm="2">
+                <v-col cols="2">
                   <v-text-field label="Q#"
                     v-model="form.data.order"
                     type="number"
                     outlined required readonly hide-details>
                   </v-text-field>
                 </v-col>
-                <v-col cols="6" sm="3">
+                <v-col cols="4">
+                  <v-checkbox label="Pass or Play?"
+                    hide-details>
+                  </v-checkbox>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6" sm="4">
                   <v-select label="Level"
                     :items="levels" item-text="name" item-value="id"
                     v-model="form.data.level_id"
@@ -77,7 +88,7 @@
                     outlined required hide-details>
                   </v-text-field>
                 </v-col>
-                <v-col cols="6" sm="5">
+                <v-col cols="6" sm="6">
                   <v-select label="Question Type"
                     :items="quest_types" item-text="name" item-value="id"
                     v-model="form.data.type_id"
@@ -85,6 +96,8 @@
                     outlined required hide-details>
                   </v-select>
                 </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="12" sm="8">
                   <v-textarea label="Question"
                     v-model="form.data.question"
@@ -155,6 +168,10 @@ export default {
         value: 'order'
       },
       {
+        text: 'Pass or Play',
+        value: 'passplay'
+      },
+      {
         text: 'Question',
         value: 'question'
       },
@@ -183,6 +200,7 @@ export default {
     form: {
       data: {
         id: 0,
+        passplay: 0,
         game_id: 0,
         level_id: 0,
         type_id: 0,
@@ -254,6 +272,7 @@ export default {
       this.form.success = false
       this.form.data = {
         id: 0,
+        passplay: 0,
         game_id: this.game_id,
         level_id: 0,
         type_id: 0,
@@ -286,6 +305,7 @@ export default {
       this.form.submitting = false
       this.form.success = false
       this.form.data.id = question.id
+      this.form.data.passplay = question.passplay
       this.form.data.level_id = question.level_id,
       this.form.data.type_id = question.type_id,
       this.form.data.order = question.order,
@@ -312,6 +332,7 @@ export default {
         if (this.form.data.id > 0) {
           response = await apiQuestions.update({
             question_id: this.form.data.id,
+            passplay: this.form.data.passplay,
             level_id: this.form.data.level_id,
             type_id: this.form.data.type_id,
             order: this.form.data.order,

@@ -111,6 +111,13 @@ export default {
       for (let answer of this.answers) {
         if (this.$store.getters.getPlayQuestionAnswer() == answer.answer) {
           answer.score = this.question.score
+          if (this.question.passplay) {
+            answer.score = this.question.score * 3
+          }
+        } else {
+          if (this.question.passplay) {
+            answer.score = 0 - (this.question.score * 2)
+          }
         }
       }
     },
