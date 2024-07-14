@@ -24,7 +24,7 @@
     </v-col>
     <v-col md="6" class="fill-height black">
 
-      <v-list class="d-flex flex-column justify-space-between fill-height py-0" style="background: black;">
+      <v-list class="d-flex flex-column justify-flex-start fill-height py-0" style="background: black;">
         <div v-for="(score, index) in scores" :key="score.name">
           <template v-if="index < 10">
             <v-list-item class="px-3 white" :class="getRankColor(index)">
