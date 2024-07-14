@@ -13,15 +13,13 @@
       <v-card>
         <v-card-title style="font-size: 5vh; line-height: 1.5;">
           WIFI: BibleQuiz
-          <br>
-          @browser: http://192.168.11.11
         </v-card-title>
       </v-card>
 
     </v-col>
     <v-col md="6" class="fill-height black">
 
-      <v-list class="d-flex flex-column justify-space-between fill-height py-0" style="background: black;">
+      <v-list class="d-flex flex-column justify-flex-start fill-height py-0" style="background: black;">
         <div v-for="(score, index) in topTenScores" :key="score.name">
           <v-list-item class="px-3 white" :class="getRankColor(index)">
             <v-list-item-icon class="my-2">
